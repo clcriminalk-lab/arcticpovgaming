@@ -187,6 +187,18 @@
   .lineup-team-toggle .btn-gold{border:1px solid #ffda7b;}
   .build-team-toggle{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin:0 0 14px;}
   .build-team-toggle .btn-gold{border:1px solid #ffda7b;}
+  .battle-pick{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:12px;}
+  .battle-pick select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#0b1c27;color:var(--chalk);font:inherit;}
+  .battle-versus{align-self:center;color:var(--gold);font-weight:900;font-size:1.15rem;letter-spacing:.1em;padding-top:24px;}
+  .battle-result{text-align:center;margin-top:14px;padding:18px;border:1px solid var(--line);border-radius:14px;background:rgba(3,15,22,.42);}
+  .battle-score{font-size:clamp(2rem,8vw,3.2rem);font-weight:900;color:#ffda7b;letter-spacing:.04em;margin:4px 0;}
+  .battle-result-title{font-weight:800;font-size:1.15rem;}
+  .battle-result-meta{font-size:.85rem;color:#b8cbd3;margin-top:6px;}
+  .redeem-row{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);}
+  .redeem-input-row{display:flex;gap:8px;}
+  .redeem-input-row input{flex:1;min-width:0;margin:0;}
+  .redeem-message{min-height:1.2em;margin:8px 0 0;color:#ffda7b;font-size:.85rem;}
+  @media(max-width:520px){.battle-pick{grid-template-columns:1fr 1fr}.battle-versus{grid-column:1/-1;grid-row:2;text-align:center;padding:0}.battle-pick .btn-gold{grid-column:1/-1}}
   @media(max-width:520px){.wrap{padding:22px 14px 48px}.card{padding:18px}.topnav{align-items:flex-start}.lineup-pitch{min-height:590px}}
 </style>
 </head>
@@ -221,9 +233,19 @@
 
   <div id="lineup" class="hidden">
     <div class="shop-header">
-      <div><h1>Starting XI</h1><p class="sub">4–3–3 formation</p></div>
+      <div><h1>Versus Battle</h1><p class="sub">Choose two teams and kick off</p></div>
       <button class="btn-outline" onclick="closeLineup()">✕ Main menu</button>
     </div>
+    <div class="card">
+      <div class="battle-pick">
+        <label>Home team<select id="battleTeamA" onchange="clearBattleResult()"></select></label>
+        <span class="battle-versus">VS</span>
+        <label>Away team<select id="battleTeamB" onchange="clearBattleResult()"></select></label>
+        <button class="btn-gold" style="grid-column:1/-1" onclick="startBattle()">⚽ Kick off</button>
+      </div>
+      <div id="battleResult" aria-live="polite"></div>
+    </div>
+    <h2 style="font-size:1rem;margin:0 0 8px;">Team lineup</h2>
     <div class="lineup-team-toggle" id="lineupTeamToggle" role="group" aria-label="Select team for lineup"></div>
     <div class="lineup-pitch" id="lineupPitch" aria-label="Football team lineup in a 4-3-3 formation"></div>
     <div class="actions-row"><button class="btn-outline" onclick="openBuild(lineupTeam)">🛠️ Choose squad</button></div>
@@ -267,6 +289,11 @@
       <div class="card" id="shopSquadCard">
         <h3 style="margin:0 0 8px;">Coins: <span id="coinBalance">0</span></h3>
         <div id="shopSquadBody" style="font-size:0.9rem; opacity:0.85;">No players bought yet.</div>
+        <div class="redeem-row">
+          <label for="redeemCode">Redeem code <span style="opacity:.65;font-weight:400;">(once per team)</span></label>
+          <div class="redeem-input-row"><input id="redeemCode" type="text" autocomplete="off" placeholder="Enter code"><button class="btn-gold" onclick="redeemShopCode()">Redeem</button></div>
+          <p class="redeem-message" id="redeemMessage" aria-live="polite"></p>
+        </div>
       </div>
       <div class="shop-scroll">
         <table>
@@ -493,7 +520,49 @@ function configuredTeamCount(){
 function openLineup(){
   document.getElementById('setup').classList.add('hidden');
   document.getElementById('lineup').classList.remove('hidden');
+  renderBattleTeams();
   renderLineup();
+}
+function renderBattleTeams(){
+  const count=configuredTeamCount();
+  const a=document.getElementById('battleTeamA'), b=document.getElementById('battleTeamB');
+  const oldA=Number(a.value)||1, oldB=Number(b.value)||2;
+  const options=Array.from({length:count},(_,i)=>{
+    const n=i+1, name=teams[n-1]?.name||('Team '+n);
+    return '<option value="'+n+'">'+name+'</option>';
+  }).join('');
+  a.innerHTML=options; b.innerHTML=options;
+  a.value=String(Math.min(oldA,count)); b.value=String(Math.min(oldB,count));
+  if(a.value===b.value) b.value=String(Number(a.value)===count?1:Number(a.value)+1);
+  clearBattleResult();
+}
+function clearBattleResult(){
+  const result=document.getElementById('battleResult');
+  if(result) result.innerHTML='';
+}
+function startBattle(){
+  const home=Number(document.getElementById('battleTeamA').value);
+  const away=Number(document.getElementById('battleTeamB').value);
+  if(home===away){
+    document.getElementById('battleResult').innerHTML='<div class="battle-result">Choose two different teams to play.</div>';
+    return;
+  }
+  const getSquad=n=>{
+    const selected=buildSquadsByTeam[n]||[];
+    return (selected.length?selected:(shopSquadByTeam[n]||[])).slice();
+  };
+  const homeSquad=getSquad(home), awaySquad=getSquad(away);
+  if(!homeSquad.length||!awaySquad.length){
+    document.getElementById('battleResult').innerHTML='<div class="battle-result">Both teams need at least one player bought from the Player Shop before they can battle.</div>';
+    return;
+  }
+  const strength=s=>s.reduce((sum,p)=>sum+p.rating,0)/s.length;
+  const homeStrength=strength(homeSquad), awayStrength=strength(awaySquad);
+  const goals=(forStrength,againstStrength)=>Math.max(0,Math.min(5,Math.floor(Math.random()*3)+Math.max(-1,Math.min(2,Math.round((forStrength-againstStrength)/10)))));
+  const homeGoals=goals(homeStrength,awayStrength), awayGoals=goals(awayStrength,homeStrength);
+  const homeName=teams[home-1]?.name||('Team '+home), awayName=teams[away-1]?.name||('Team '+away);
+  const winner=homeGoals===awayGoals?'It’s a draw!':(homeGoals>awayGoals?homeName:awayName)+' win!';
+  document.getElementById('battleResult').innerHTML='<div class="battle-result"><div class="battle-result-title">'+winner+'</div><div class="battle-score">'+homeGoals+' — '+awayGoals+'</div><div>'+homeName+' <span style="opacity:.65">vs</span> '+awayName+'</div><div class="battle-result-meta">Squad strength '+Math.round(homeStrength)+' ('+homeSquad.length+' players) · '+Math.round(awayStrength)+' ('+awaySquad.length+' players)</div></div>';
 }
 function selectLineupTeam(teamNumber){
   if(teamNumber<1 || teamNumber>configuredTeamCount()) return;
@@ -611,7 +680,28 @@ function renderBuildList(){
 
 const shopCoinsByTeam = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0};
 const shopSquadByTeam = {1:[], 2:[], 3:[], 4:[], 5:[], 6:[]};
+const redeemedByTeam = {1:false,2:false,3:false,4:false,5:false,6:false};
 let shopActiveTeam = 1;
+
+function redeemShopCode(){
+  const input=document.getElementById('redeemCode');
+  const message=document.getElementById('redeemMessage');
+  if(redeemedByTeam[shopActiveTeam]){
+    message.textContent='This team has already redeemed a code.';
+    return;
+  }
+  if(input.value.trim().toLowerCase()!=='messi1010'){
+    message.textContent='That code is not valid.';
+    return;
+  }
+  redeemedByTeam[shopActiveTeam]=true;
+  shopCoinsByTeam[shopActiveTeam]+=10000;
+  input.value='';
+  message.textContent='Code accepted — 10,000 coins added to '+(teams[shopActiveTeam-1]?.name||('Team '+shopActiveTeam))+'.';
+  renderShopToggle();
+  renderShopList();
+  renderShopSquad();
+}
 
 function selectShopTeam(n){
   if(n<1 || n>configuredTeamCount()) return;
