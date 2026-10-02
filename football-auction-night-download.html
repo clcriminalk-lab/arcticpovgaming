@@ -743,6 +743,8 @@ function renderShopToggle(){
 function buyPlayer(name,pos,price,ratingBase=price){
   const coins = shopCoinsByTeam[shopActiveTeam];
   const squad = shopSquadByTeam[shopActiveTeam];
+  const ownedByAnotherTeam = Object.entries(shopSquadByTeam).some(([team,players])=>Number(team)!==shopActiveTeam && players.some(p=>p.name===name));
+  if(ownedByAnotherTeam) return;
   if(coins < price) return;
   if(squad.length >= TEAM_SIZE_CAP) return;
   const used = squad.filter(p=>p.pos===pos).length;
@@ -772,7 +774,9 @@ function renderShopList(){
   document.getElementById('shopCount').textContent = `${sorted.length} players eligible · earn 100 coins by winning an auction`;
   document.getElementById('shopBody').innerHTML = sorted.map(([name,pos,base])=>{
     const tags = tagsFor(name);
-    const already = squad.some(p=>p.name===name);
+    const ownerTeam = Object.keys(shopSquadByTeam).find(team=>shopSquadByTeam[team].some(p=>p.name===name));
+    const already = ownerTeam !== undefined;
+    const ownedByAnotherTeam = already && Number(ownerTeam)!==shopActiveTeam;
     const used = squad.filter(p=>p.pos===pos).length;
     const limit = POSITION_LIMITS[pos];
     const posFull = limit !== undefined && used >= limit;
@@ -780,7 +784,7 @@ function renderShopList(){
     const shopPrice = base + 10;
     const canAfford = coins >= shopPrice;
     const disabled = already || posFull || squadFull || !canAfford;
-    const label = already ? 'Owned' : (posFull ? 'Pos full' : (squadFull ? 'Squad full' : (!canAfford ? 'No coins' : `Buy · ${shopPrice}`)));
+    const label = already ? (ownedByAnotherTeam ? `Team ${ownerTeam} bought` : 'Owned') : (posFull ? 'Pos full' : (squadFull ? 'Squad full' : (!canAfford ? 'No coins' : `Buy · ${shopPrice}`)));
     return `<tr><td>${name}</td><td>${pos}</td><td>${ratingFor(name,base)}</td><td>${shopPrice}</td><td>${tags.length?tags.join(', '):'—'}</td>
       <td><button class="btn-gold" style="padding:5px 12px; font-size:0.78rem;" ${disabled?'disabled':''} onclick="buyPlayer('${name.replace(/'/g,"\\'")}','${pos}',${shopPrice},${base})">${label}</button></td></tr>`;
   }).join('');
