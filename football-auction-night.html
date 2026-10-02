@@ -1,0 +1,737 @@
+Warning: truncated output (original token count: 12546)
+Total output lines: 904
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Football Auction Night — Arctic POV Gaming</title>
+<style>
+  :root{
+    --pitch:#0F3D2E; --pitch2:#0A2C21; --chalk:#F3F1E9; --gold:#D8A73D;
+    --gold-dim:#8A6E2A; --navy:#101826; --panel:#132A22; --red:#B3261E;
+    --line: rgba(243,241,233,0.14);
+    padding-top: env(safe-area-inset-top,0px);
+    padding-bottom: env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --pitch:#EDEBE1; --pitch2:#E1DECF; --chalk:#111826; --panel:#FFFFFF;
+      --line: rgba(17,24,38,0.12);
+    }
+  }
+  :root[data-theme="dark"]{ --pitch:#0F3D2E; --chalk:#F3F1E9; }
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100%; background:var(--pitch); color:var(--chalk);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 2px, transparent 2px 140px);
+  }
+  .wrap{max-width:760px; margin:0 auto; padding:24px 18px 60px;}
+  h1{font-size:1.5rem; letter-spacing:0.3px; margin:0 0 4px; font-weight:800;}
+  .sub{color:var(--gold); font-size:0.95rem; margin:0 0 28px; opacity:0.9;}
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:20px; margin-bottom:16px;
+  }
+  label{display:block; font-size:0.85rem; margin-bottom:6px; opacity:0.85;}
+  input[type=number], input[type=text]{
+    width:100%; padding:10px 12px; border-radius:6px; border:1px solid var(--line);
+    background:transparent; color:var(--chalk); font-size:1rem; margin-bottom:14px;
+  }
+  .row{display:flex; gap:12px; flex-wrap:wrap;}
+  .row > div{flex:1; min-width:140px;}
+  button{
+    font:inherit; cursor:pointer; border:none; border-radius:8px; padding:12px 16px;
+    font-weight:700; font-size:0.95rem; transition:transform .08s ease, opacity .15s ease;
+  }
+  button:active{transform:scale(0.97);}
+  button:disabled{opacity:0.35; cursor:not-allowed;}
+  .btn-gold{background:var(--gold); color:#1a1305;}
+  .btn-outline{background:transparent; color:var(--chalk); border:1px solid var(--line);}
+  .btn-red{background:var(--red); color:#fff;}
+  .hidden{display:none !important;}
+
+  .topnav{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+    margin-bottom:12px;
+  }
+  .topnav h1{margin-bottom:2px;}
+  .shop-link{flex-shrink:0; white-space:nowrap;}
+
+  .shop-overlay{
+    position:fixed; inset:0; z-index:50; background:var(--pitch2, var(--pitch));
+    background:rgba(10,30,22,0.97);
+    padding:calc(18px + env(safe-area-inset-top,0px)) 18px calc(18px + env(safe-area-inset-bottom,0px));
+    overflow-y:auto;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]) .shop-overlay{ background:rgba(237,235,225,0.98); }
+  }
+  .shop-panel{max-width:760px; margin:0 auto;}
+  .shop-header{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+    margin-bottom:16px; position:sticky; top:0; padding-top:4px;
+  }
+  .shop-scroll{
+    background:var(--panel); border:1px solid var(--line); border-radius:10px;
+    padding:14px; overflow-x:auto;
+  }
+
+  .player-stage{text-align:center; padding:28px 20px;}
+  .player-name{font-size:1.9rem; font-weight:800; margin:0 0 4px;}
+  .player-pos{color:var(--gold); font-size:0.95rem; margin-bottom:6px; letter-spacing:0.4px;}
+  .rating-badge{
+    display:inline-block; background:var(--navy); border:1px solid var(--gold);
+    color:var(--gold); font-weight:800; font-size:0.85rem; padding:3px 10px;
+    border-radius:20px; margin-bottom:10px;
+  }
+  .tags-row{display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-bottom:16px;}
+  .tag-chip{
+    display:inline-block; background:transparent; border:1px solid var(--line);
+    color:var(--chalk); font-weight:600; font-size:0.75rem; padding:3px 10px;
+    border-radius:20px; opacity:0.85;
+  }
+
+  .bid-amount{font-size:2.6rem; font-weight:800; margin:6px 0 2px;}
+  .bid-label{font-size:0.8rem; opacity:0.7; margin-bottom:18px;}
+  .leading{font-size:0.95rem; margin-bottom:6px; min-height:1.2em;}
+  .leading b{color:var(--gold);}
+
+  .teams-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:6px;}
+  .team-btn{
+    display:flex; flex-direction:column; align-items:flex-start; gap:2px;
+    background:var(--navy); border:1px solid var(--line); color:var(--chalk);
+    text-align:left;
+  }
+  .team-btn .tname{font-weight:800; font-size:0.95rem;}
+  .team-btn .tbudget{font-size:0.78rem; opacity:0.75; font-weight:400;}
+  .team-btn.leading-team{border-color:var(--gold); box-shadow:0 0 0 1px var(--gold) inset;}
+
+  .actions-row{display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; justify-content:center;}
+
+  table{width:100%; border-collapse:collapse; font-size:0.9rem;}
+  th,td{text-align:left; padding:7px 6px; border-bottom:1px solid var(--line);}
+  th{opacity:0.65; font-weight:600; font-size:0.78rem;}
+  .team-block h3{margin:0 0 2px; font-size:1.05rem;}
+  .team-block .stat{font-size:0.82rem; opacity:0.75; margin-bottom:10px;}
+  .progress{font-size:0.85rem; opacity:0.7; margin-bottom:10px;}
+  .winner-banner{
+    background:linear-gradient(135deg, var(--gold), #a97f22); color:#1a1305;
+    border-radius:10px; padding:18px 20px; margin-bottom:20px; font-weight:800;
+  }
+  .winner-banner .wtitle{font-size:0.8rem; text-transform:none; opacity:0.75; margin-bottom:2px; font-weight:700;}
+  .winner-banner .wname{font-size:1.4rem;}
+  .winner-banner .wstat{font-size:0.85rem; font-weight:600; margin-top:4px; opacity:0.85;}
+  .lineup-pitch{
+    min-height:620px; padding:22px 12px; border:2px solid rgba(255,255,255,.75); border-radius:14px;
+    background:linear-gradient(90deg,rgba(255,255,255,.08) 50%,transparent 50%),#176b45;
+    background-size:100% 100%; position:relative; display:flex; flex-direction:column;
+    justify-content:space-around; overflow:hidden;
+  }
+  .lineup-pitch:before{content:"";position:absolute;inset:50% 0 auto;border-top:2px solid rgba(255,255,255,.65);}
+  .lineup-pitch:after{content:"";position:absolute;width:110px;height:110px;border:2px solid rgba(255,255,255,.65);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);}
+  .lineup-row{display:flex;justify-content:space-evenly;align-items:center;gap:6px;position:relative;z-index:1;}
+  .lineup-player{width:min(22%,130px);min-height:62px;padding:8px 4px;border-radius:10px;text-align:center;color:#fff;background:rgba(9,35,24,.84);border:1px solid rgba(255,255,255,.7);font-size:.78rem;box-shadow:0 2px 8px #0004;}
+  .lineup-player b{display:block;color:#f1cb67;font-size:.72rem;margin-bottom:3px;}
+  .lineup-player span{display:block;overflow-wrap:anywhere;}
+  .lineup-team-toggle{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 14px;}
+  .lineup-team-toggle button{padding:9px 8px;}
+  @media(max-width:480px){.lineup-pitch{min-height:560px}.lineup-player{font-size:.68rem;padding:6px 2px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topnav">
+    <div>
+      <h1>Auction Night</h1>
+      <p class="sub">Build your squad, one bid at a time.</p>
+    </div>
+    <button class="btn-outline shop-link" onclick="openShop()">ℹ️ Player info</button>
+  </div>
+
+  <!-- SETUP -->
+  <div id="setup" class="card">
+    <div class="row">
+      <div>
+        <label for="numTeams">Number of teams</label>
+        <input type="number" id="numTeams" min="2" max="6" value="4">
+      </div>
+      <div>
+        <label for="budget">Budget per team (credits)</label>
+        <input type="number" id="budget" min="20" step="10" value="100">
+      </div>
+    </div>
+    <button class="btn-gold" onclick="startAuction()">Start auction</button>
+    <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openBuild()">🛠️ Build</button>
+    <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openShop()">🛒 Player shop</button>
+    <button class="btn-gold" style="width:100%; margin-top:10px;" onclick="openLineup()">▶ Play</button>
+  </div>
+
+  <div id="lineup" class="hidden">
+    <div class="shop-header">
+      <div><h1>Starting XI</h1><p class="sub">4–3–3 formation</p></div>
+      <button class="btn-outline" onclick="closeLineup()">✕ Main menu</button>
+    </div>
+    <div class="lineup-team-toggle" role="group" aria-label="Select team for lineup">
+      <button id="lineupTeam1" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(1)">Team 1</button>
+      <button id="lineupTeam2" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(2)">Team 2</button>
+      <button id="lineupTeam3" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(3)">Team 3</button>
+      <button id="lineupTeam4" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(4)">Team 4</button>
+    </div>
+    <div class="lineup-pitch" id="lineupPitch" aria-label="Football team lineup in a 4-3-3 formation"></div>
+    <div class="actions-row"><button class="btn-outline" onclick="openBuild()">🛠️ Choose squad</button></div>
+  </div>
+
+  <!-- BUILD (free squad builder, no bidding) -->
+  <div id="build" class="hidden shop-overlay">
+    <div class="shop-panel">
+      <div class="shop-header">
+        <div>
+          <h1 style="margin-bottom:2px;">Build a squad</h1>
+          <p class="sub" id="buildCount" style="margin-bottom:0;"></p>
+        </div>
+        <button class="btn-outline" onclick="closeBuild()">✕ Close</button>
+      </div>
+      <div class="card" id="buildSquadCard">
+        <h3 style="margin:0 0 8px;">Your squad</h3>
+        <div id="buildSquadBody" style="font-size:0.9rem; opacity:0.85;">No players yet.</div>
+      </div>
+      <div class="shop-scroll">
+        <table>
+          <thead><tr><th>Player</th><th>Position</th><th>OVR</th><th></th></tr></thead>
+          <tbody id="buildListBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOP (full-screen overlay) -->
+  <div id="shop" class="hidden shop-overlay">
+    <div class="shop-panel">
+      <div class="shop-header">
+        <div>
+          <h1 style="margin-bottom:2px;">Player shop</h1>
+          <p class="sub" id="shopCount" style="margin-bottom:0;"></p>
+        </div>
+        <button class="btn-outline" onclick="closeShop()">✕ Close</button>
+      </div>
+      <div class="teams-grid" id="shopTeamToggle" style="margin-bottom:14px;"></div>
+      <div class="card" id="shopSquadCard">
+        <h3 style="margin:0 0 8px;">Coins: <span id="coinBalance">0</span></h3>
+        <div id="shopSquadBody" style="font-size:0.9rem; opacity:0.85;">No players bought yet.</div>
+      </div>
+      <div class="shop-scroll">
+        <table>
+          <thead><tr><th>Player</th><th>Position</th><th>OVR</th><th>Base</th><th>Tags</th><th></th></tr></thead>
+          <tbody id="shopBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUCTION -->
+  <div id="auction" class="hidden">
+    <div class="progress" id="progress"></div>
+    <div class="card player-stage">
+      <div class="player-pos" id="playerPos"></div>
+      <div class="rating-badge" id="playerRating"></div>
+      <div class="tags-row" id="playerTags"></div>
+      <div class="player-name" id="playerName"></div>
+      <div class="bid-label">current bid</div>
+      <div class="bid-amount" id="bidAmount"></div>
+      <div class="leading" id="leadingLine">No bids yet</div>
+    </div>
+    <div class="card">
+      <div class="teams-grid" id="teamButtons"></div>
+      <div class="actions-row">
+        <button class="btn-gold" id="soldBtn" onclick="sellPlayer()" disabled>Sold!</button>
+        <button class="btn-outline" id="backBtn" onclick="goBack()" disabled>Back</button>
+        <button class="btn-outline" onclick="skipPlayer()">Unsold, skip</button>
+        <button class="btn-outline" onclick="backToMenu()">Main menu</button>
+        <button class="btn-red" onclick="finish()">Finish auction</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results" class="hidden">
+    <h1 style="margin-bottom:18px;">Final squads</h1>
+    <div id="resultsBody"></div>
+    <div class="actions-row">
+      <button class="btn-gold" onclick="backToMenu()">Back to main menu</button>
+      <button class="btn-outline" onclick="location.reload()">Run a new auction</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PLAYERS = [
+  ["Lionel Messi","Winger",25],["Cristiano Ronaldo","Striker",25],
+  ["Gianluigi Buffon","Goalkeeper",20],["Paolo Maldini","Centre Back",20],
+  ["Diego Maradona","Attacking Mid",24],["Pelé","Striker",24],
+  ["Zinedine Zidane","Attacking Mid",22],["Ronaldo Nazário","Striker",22],
+  ["Johan Cruyff","Forward",21],["Franz Beckenbauer","Centre Back",20],
+  ["Xavi Hernández","Central Mid",18],["Andrés Iniesta","Attacking Mid",18],
+  ["Ronaldinho","Winger",19],["Thierry Henry","Striker",18],
+  ["Roberto Carlos","Full Back",16],["Cafu","Full Back",15],
+  ["Iker Casillas","Goalkeeper",17],["Andrea Pirlo","Central Mid",16],
+  ["Fabio Cannavaro","Centre Back",15],["Dennis Bergkamp","Attacking Mid",15],
+  ["Kylian Mbappé","Striker",24],["Robert Lewandowski","Striker",22],["Erling Haaland","Striker",22],
+  ["Karim Benzema","Striker",21],["Luis Suárez","Striker",20],["Zlatan Ibrahimović","Striker",19],
+  ["Didier Drogba","Striker",18],["Alan Shearer","Striker",16],["Ruud van Nistelrooy","Striker",16],
+  ["Gabriel Batistuta","Striker",17],["Filippo Inzaghi","Striker",14],["Samuel Eto'o","Striker",16],
+  ["Fernando Torres","Striker",14],["Raúl González","Striker",18],["Michael Owen","Striker",15],
+  ["Wayne Rooney","Striker",17],["George Weah","Striker",16],["Marco van Basten","Striker",19],
+  ["Gerd Müller","Striker",20],["Eusébio","Striker",18],["Ferenc Puskás","Striker",18],
+  ["Just Fontaine","Striker",14],["Romário","Striker",18],["Hristo Stoichkov","Striker",15],
+  ["David Villa","Striker",14],["Harry Kane","Striker",18],["Sergio Agüero","Striker",17],
+  ["Paolo Rossi","Striker",15],["Mohamed Salah","Striker",21],["Sadio Mané","Striker",19],
+  ["Son Heung-min","Striker",18],["Marcus Rashford","Striker",15],
+  ["Neymar Jr","Winger",23],["Arjen Robben","Winger",18],["Franck Ribéry","Winger",18],
+  ["David Beckham","Winger",17],["Luís Figo","Winger",17],["Garrincha","Winger",18],
+  ["Antoine Griezmann","Winger",19],["Ángel Di María","Winger",16],["Gareth Bale","Winger",17],
+  ["Marc Overmars","Winger",13],["Stanley Matthews","Winger",15],["Vinícius Júnior","Winger",20],
+  ["Riyad Mahrez","Winger",14],
+  ["Kaká","Attacking Mid",18],["Michael Laudrup","Attacking Mid",16],["Roberto Baggio","Attacking Mid",18],
+  ["Rivaldo","Attacking Mid",18],["Juan Román Riquelme","Attacking Mid",15],["Mesut Özil","Attacking Mid",15],
+  ["David Silva","Attacking Mid",15],["Zico","Attacking Mid",17],["Sócrates","Attacking Mid",15],
+  ["Diego Forlán","Attacking Mid",14],["Gianfranco Zola","Attacking Mid",14],
+  ["Steven Gerrard","Central Mid",18],["Frank Lampard","Central Mid",17],["Paul Scholes","Central Mid",16],
+  ["Michael Ballack","Central Mid",15],["Toni Kroos","Central Mid",17],["Sergio Busquets","Defensive Mid",14],
+  ["N'Golo Kanté","Defensive Mid",16],["Patrick Vieira","Defensive Mid",15],["Claude Makélélé","Defensive Mid",13],
+  ["Bastian Schweinsteiger","Central Mid",14],["Luka Modrić","Central Mid",20],["Edgar Davids","Defensive Mid",12],
+  ["Gennaro Gattuso","Defensive Mid",12],["Didier Deschamps","Defensive Mid",12],["Kevin De Bruyne","Central Mid",20],
+  ["Jude Bellingham","Central Mid",19],["Casemiro","Defensive Mid",16],["Yaya Touré","Central Mid",15],
+  ["Sergio Ramos","Centre Back",18],["Gerard Piqué","Centre Back",14],["Rio Ferdinand","Centre Back",14],
+  ["John Terry","Centre Back",14],["Alessandro Nesta","Centre Back",15],["Franco Baresi","Centre Back",17],
+  ["Marcel Desailly","Centre Back",13],["Carles Puyol","Centre Back",15],["Thiago Silva","Centre Back",15],
+  ["Virgil van Dijk","Centre Back",18],["Daniel Passarella","Centre Back",13],
+  ["Philipp Lahm","Full Back",15],["Dani Alves","Full Back",15],["Giacinto Facchetti","Full Back",12],
+  ["Marcelo","Full Back",14],["Ashley Cole","Full Back",13],
+  ["Lev Yashin","Goalkeeper",16],["Oliver Kahn","Goalkeeper",16],["Peter Schmeichel","Goalkeeper",16],
+  ["Manuel Neuer","Goalkeeper",18],["Dino Zoff","Goalkeeper",15],["Gordon Banks","Goalkeeper",14],
+  ["Edwin van der Sar","Goalkeeper",14],["José Luis Chilavert","Goalkeeper",12],["Petr Čech","Goalkeeper",14],
+  ["Francesco Totti","Attacking Mid",20],["Alessandro Del Piero","Attacking Mid",19],
+  ["Hernán Crespo","Striker",16],["Javier Zanetti","Full Back",15],["Christian Vieri","Striker",15],
+  ["Fabrizio Ravanelli","Striker",12],["Luca Toni","Striker",12],["Edinson Cavani","Striker",17],
+  ["Diego Costa","Striker",14],["Álvaro Morata","Striker",12],["Radamel Falcao","Striker",15],
+  ["James Rodríguez","Attacking Mid",15],["Juan Cuadrado","Winger",11],["Carlos Valderrama","Central Mid",15],
+  ["Faustino Asprilla","Striker",12],["Iván Zamorano","Striker",13],["Marcelo Salas","Striker",13],
+  ["Elías Figueroa","Centre Back",13],["Enzo Francescoli","Attacking Mid",15],["Deco","Attacking Mid",15],
+  ["Pauleta","Striker",13],["Nuno Gomes","Striker",11],["Rui Costa","Attacking Mid",15],
+  ["Fernando Couto","Centre Back",12],["Andriy Shevchenko","Striker",18],["Pavel Nedvěd","Winger",16],
+  ["Michael Essien","Central Mid",14],["Didier Zokora","Defensive Mid",10],["Jay-Jay Okocha","Attacking Mid",15],
+  ["Nwankwo Kanu","Striker",13],["Rigobert Song","Centre Back",10],["Roger Milla","Striker",13],
+  ["Abedi Pele","Attacking Mid",14],["El Hadji Diouf","Winger",10],["Mohamed Aboutrika","Attacking Mid",13],
+  ["Ahmed Hassan","Central Mid",11],["Sami Khedira","Central Mid",13],["Miroslav Klose","Striker",17],
+  ["Lukas Podolski","Winger",13],["Thomas Müller","Attacking Mid",18],["Mario Götze","Attacking Mid",15],
+  ["Mats Hummels","Centre Back",15],["Jérôme Boateng","Centre Back",14],["Marco Reus","Winger",16],
+  ["Ilkay Gündogan","Central Mid",15],["Joshua Kimmich","Full Back",17],["Hugo Lloris","Goalkeeper",15],
+  ["Raphaël Varane","Centre Back",16],["Blaise Matuidi","Central Mid",12],["Paul Pogba","Central Mid",17],
+  ["Olivier Giroud","Striker",13],["Robert Pirès","Winger",14],["Laurent Blanc","Centre Back",13],
+  ["Youri Djorkaeff","Attacking Mid",14],["Emmanuel Petit","Central Mid",12],["Bixente Lizarazu","Full Back",12],
+  ["Lilian Thuram","Centre Back",15],["William Gallas","Centre Back",11],["Nicolas Anelka","Striker",13],
+  ["David Trezeguet","Striker",14],["Grzegorz Lato","Winger",11],["Zbigniew Boniek","Attacking Mid",14],
+  ["Kazimierz Deyna","Central Mid",12],["József Bozsik","Central Mid",11],["Sándor Kocsis","Striker",15],
+  ["Nándor Hidegkuti","Forward",14],["Bobby Moore","Centre Back",15],["Bobby Charlton","Attacking Mid",17],
+  ["Geoff Hurst","Striker",14],["Kenny Dalglish","Striker",15],["Ian Rush","Striker",14],
+  ["Kevin Keegan","Striker",13],["Peter Shilton","Goalkeeper",14],["Paul Gascoigne","Attacking Mid",14],
+  ["Frank Rijkaard","Central Mid",15],["Ruud Gullit","Attacking Mid",17],["Clarence Seedorf","Central Mid",14],
+  ["Patrick Kluivert","Striker",14],["Robin van Persie","Striker",16],["Wesley Sneijder","Attacking Mid",15],
+  ["Gheorghe Hagi","Attacking Mid",16],["Marius Lăcătuș","Winger",9],["Davor Šuker","Striker",14],
+  ["Zvonimir Boban","Central Mid",12],["Robert Prosinečki","Attacking Mid",12],["Predrag Mijatović","Striker",12],
+  ["Siniša Mihajlović","Full Back",11],["Peter Crouch","Striker",9],["Jamie Vardy","Striker",11],
+  ["Diego Milito","Striker",12],["Gonzalo Higuaín","Striker",15],["Juan Sebastián Verón","Central Mid",13],
+  ["Esteban Cambiasso","Central Mid",12],["Javier Mascherano","Defensive Mid",13],["Walt…2546 tokens truncated…x 10px; font-size:0.78rem;" onclick="removeFromBuild('${p.name.replace(/'/g,"\\'")}')">Remove</button>
+    </div>`).join('');
+}
+function renderBuildList(){
+  const sorted = ELIGIBLE_PLAYERS.slice().sort((a,b)=> ratingFor(b[0],b[2]) - ratingFor(a[0],a[2]));
+  document.getElementById('buildListBody').innerHTML = sorted.map(([name,pos,base])=>{
+    const already = buildSquad.some(p=>p.name===name);
+    const used = buildSquad.filter(p=>p.pos===pos).length;
+    const limit = POSITION_LIMITS[pos];
+    const posFull = limit !== undefined && used >= limit;
+    const squadFull = buildSquad.length >= TEAM_SIZE_CAP;
+    const disabled = already || posFull || squadFull;
+    const label = already ? 'Added' : (posFull ? 'Pos full' : (squadFull ? 'Squad full' : 'Add'));
+    return `<tr><td>${name}</td><td>${pos}</td><td>${ratingFor(name,base)}</td>
+      <td><button class="btn-gold" style="padding:5px 12px; font-size:0.78rem;" ${disabled?'disabled':''} onclick="addToBuild('${name.replace(/'/g,"\\'")}','${pos}',${base})">${label}</button></td></tr>`;
+  }).join('');
+}
+
+const shopCoinsByTeam = {1:0, 2:0, 3:0, 4:0};
+const shopSquadByTeam = {1:[], 2:[], 3:[], 4:[]};
+let shopActiveTeam = 1;
+
+function selectShopTeam(n){
+  shopActiveTeam = n;
+  renderShopToggle();
+  renderShopSquad();
+  renderShopList();
+}
+
+function renderShopToggle(){
+  const wrap = document.getElementById('shopTeamToggle');
+  wrap.innerHTML = [1,2,3,4].map(n=>{
+    const label = (teams[n-1] && teams[n-1].name) ? teams[n-1].name : `Team ${n}`;
+    return `<button class="team-btn${n===shopActiveTeam?' leading-team':''}" onclick="selectShopTeam(${n})">
+      <span class="tname">${label}</span><span class="tbudget">${shopCoinsByTeam[n]} coins</span></button>`;
+  }).join('');
+}
+
+function buyPlayer(name,pos,base){
+  const coins = shopCoinsByTeam[shopActiveTeam];
+  const squad = shopSquadByTeam[shopActiveTeam];
+  if(coins < base) return;
+  if(squad.length >= TEAM_SIZE_CAP) return;
+  const used = squad.filter(p=>p.pos===pos).length;
+  const limit = POSITION_LIMITS[pos];
+  if(limit !== undefined && used >= limit) return;
+  shopCoinsByTeam[shopActiveTeam] -= base;
+  squad.push({name,pos,rating:ratingFor(name,base)});
+  renderShopToggle();
+  renderShopList();
+  renderShopSquad();
+}
+
+function renderShopSquad(){
+  const squad = shopSquadByTeam[shopActiveTeam];
+  document.getElementById('coinBalance').textContent = shopCoinsByTeam[shopActiveTeam];
+  const body = document.getElementById('shopSquadBody');
+  if(!squad.length){ body.innerHTML = 'No players bought yet.'; return; }
+  body.innerHTML = squad.map(p=>
+    `<div style="padding:3px 0; border-bottom:1px solid var(--line);">${p.name} <span style="opacity:.6;">(${p.pos}, ${p.rating})</span></div>`
+  ).join('');
+}
+
+function renderShopList(){
+  const squad = shopSquadByTeam[shopActiveTeam];
+  const coins = shopCoinsByTeam[shopActiveTeam];
+  const sorted = ELIGIBLE_PLAYERS.slice().sort((a,b)=> ratingFor(b[0],b[2]) - ratingFor(a[0],a[2]));
+  document.getElementById('shopCount').textContent = `${sorted.length} players eligible · earn 100 coins by winning an auction`;
+  document.getElementById('shopBody').innerHTML = sorted.map(([name,pos,base])=>{
+    const tags = tagsFor(name);
+    const already = squad.some(p=>p.name===name);
+    const used = squad.filter(p=>p.pos===pos).length;
+    const limit = POSITION_LIMITS[pos];
+    const posFull = limit !== undefined && used >= limit;
+    const squadFull = squad.length >= TEAM_SIZE_CAP;
+    const canAfford = coins >= base;
+    const disabled = already || posFull || squadFull || !canAfford;
+    const label = already ? 'Owned' : (posFull ? 'Pos full' : (squadFull ? 'Squad full' : (!canAfford ? 'No coins' : `Buy · ${base}`)));
+    return `<tr><td>${name}</td><td>${pos}</td><td>${ratingFor(name,base)}</td><td>${base}</td><td>${tags.length?tags.join(', '):'—'}</td>
+      <td><button class="btn-gold" style="padding:5px 12px; font-size:0.78rem;" ${disabled?'disabled':''} onclick="buyPlayer('${name.replace(/'/g,"\\'")}','${pos}',${base})">${label}</button></td></tr>`;
+  }).join('');
+}
+
+function openShop(){
+  document.getElementById('shop').classList.remove('hidden');
+  renderShopToggle();
+  renderShopSquad();
+  renderShopList();
+}
+
+function closeShop(){
+  document.getElementById('shop').classList.add('hidden');
+}
+
+function startAuction(){
+  const n = Math.max(2, Math.min(6, parseInt(document.getElementById('numTeams').value)||4));
+  const budget = Math.max(10, parseInt(document.getElementById('budget').value)||100);
+  teams = Array.from({length:n}, (_,i)=>({name:`Team ${String.fromCharCode(65+i)}`, budget, squad:[]}));
+  queue = shuffle(ELIGIBLE_PLAYERS).slice(0, 50);
+  idx = 0;
+  history = [];
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('auction').classList.remove('hidden');
+  loadPlayer();
+}
+
+const PRIME_RATINGS = {
+  "Lionel Messi":102, "Cristiano Ronaldo":101, "Pelé":104, "Diego Maradona":103,
+  "Zinedine Zidane":95, "Ronaldo Nazário":96, "Johan Cruyff":94, "Xavi Hernández":94,
+  "Andrés Iniesta":93, "Ronaldinho":100, "Franz Beckenbauer":93, "Paolo Maldini":100,
+  "Gianluigi Buffon":100, "Franco Baresi":92, "Iker Casillas":90, "Andrea Pirlo":91,
+  "Fabio Cannavaro":91, "Dennis Bergkamp":90, "Thierry Henry":92, "Roberto Carlos":99,
+  "Cafu":90, "Neymar Jr":101, "Kylian Mbappé":98, "Robert Lewandowski":96, "Erling Haaland":97,
+  "Karim Benzema":91, "Luis Suárez":97, "Zlatan Ibrahimović":90, "Didier Drogba":89,
+  "Alan Shearer":88, "Ruud van Nistelrooy":89, "Gabriel Batistuta":100, "Filippo Inzaghi":87,
+  "Samuel Eto'o":89, "Fernando Torres":87, "Raúl González":97, "Michael Owen":87,
+  "Wayne Rooney":89, "George Weah":88, "Marco van Basten":92, "Gerd Müller":93,
+  "Eusébio":91, "Ferenc Puskás":92, "Just Fontaine":87, "Romário":92, "Hristo Stoichkov":89,
+  "David Villa":87, "Harry Kane":98, "Sergio Agüero":89, "Paolo Rossi":88, "Mohamed Salah":90,
+  "Sadio Mané":89, "Son Heung-min":88, "Marcus Rashford":85, "Arjen Robben":90, "Franck Ribéry":90,
+  "David Beckham":100, "Luís Figo":89, "Garrincha":93, "Antoine Griezmann":90, "Ángel Di María":87,
+  "Gareth Bale":89, "Marc Overmars":85, "Stanley Matthews":89, "Vinícius Júnior":89, "Riyad Mahrez":85,
+  "Kaká":90, "Michael Laudrup":89, "Roberto Baggio":91, "Rivaldo":91, "Juan Román Riquelme":88,
+  "Mesut Özil":88, "David Silva":88, "Zico":90, "Sócrates":89, "Diego Forlán":86, "Gianfranco Zola":87,
+  "Steven Gerrard":90, "Frank Lampard":89, "Paul Scholes":89, "Michael Ballack":88, "Toni Kroos":90,
+  "Sergio Busquets":87, "N'Golo Kanté":88, "Patrick Vieira":88, "Claude Makélélé":86,
+  "Bastian Schweinsteiger":87, "Luka Modrić":91, "Edgar Davids":85, "Gennaro Gattuso":84,
+  "Didier Deschamps":83, "Kevin De Bruyne":91, "Jude Bellingham":93, "Casemiro":86, "Yaya Touré":87,
+  "Sergio Ramos":94, "Gerard Piqué":87, "Rio Ferdinand":87, "John Terry":87, "Alessandro Nesta":90,
+  "Marcel Desailly":85, "Carles Puyol":88, "Thiago Silva":88, "Virgil van Dijk":90, "Daniel Passarella":86,
+  "Philipp Lahm":88, "Dani Alves":87, "Giacinto Facchetti":85, "Marcelo":87, "Ashley Cole":86,
+  "Lev Yashin":100, "Oliver Kahn":90, "Peter Schmeichel":90, "Manuel Neuer":91, "Dino Zoff":89,
+  "Gordon Banks":88, "Edwin van der Sar":100, "José Luis Chilavert":85, "Petr Čech":86,
+  "Francesco Totti":90, "Alessandro Del Piero":100, "Hernán Crespo":87, "Javier Zanetti":87,
+  "Christian Vieri":86, "Fabrizio Ravanelli":82, "Luca Toni":82, "Edinson Cavani":88,
+  "Diego Costa":84, "Álvaro Morata":82, "Radamel Falcao":85, "James Rodríguez":85,
+  "Juan Cuadrado":81, "Carlos Valderrama":87, "Faustino Asprilla":82, "Iván Zamorano":83,
+  "Marcelo Salas":83, "Elías Figueroa":84, "Enzo Francescoli":86, "Deco":86, "Pauleta":83,
+  "Nuno Gomes":81, "Rui Costa":87, "Fernando Couto":82, "Andriy Shevchenko":89, "Pavel Nedvěd":88,
+  "Michael Essien":85, "Didier Zokora":79, "Jay-Jay Okocha":86, "Nwankwo Kanu":83, "Rigobert Song":79,
+  "Roger Milla":83, "Abedi Pele":85, "El Hadji Diouf":79, "Mohamed Aboutrika":83, "Ahmed Hassan":80,
+  "Sami Khedira":83, "Miroslav Klose":88, "Lukas Podolski":83, "Thomas Müller":89, "Mario Götze":86,
+  "Mats Hummels":86, "Jérôme Boateng":85, "Marco Reus":87, "Ilkay Gündogan":86, "Joshua Kimmich":88,
+  "Hugo Lloris":86, "Raphaël Varane":87, "Blaise Matuidi":82, "Paul Pogba":87, "Olivier Giroud":83,
+  "Robert Pirès":85, "Laurent Blanc":84, "Youri Djorkaeff":85, "Emmanuel Petit":83, "Bixente Lizarazu":83,
+  "Lilian Thuram":87, "William Gallas":81, "Nicolas Anelka":83, "David Trezeguet":85, "Grzegorz Lato":82,
+  "Zbigniew Boniek":85, "Kazimierz Deyna":83, "József Bozsik":82, "Sándor Kocsis":87, "Nándor Hidegkuti":86,
+  "Bobby Moore":87, "Bobby Charlton":89, "Geoff Hurst":85, "Kenny Dalglish":87, "Ian Rush":85,
+  "Kevin Keegan":84, "Peter Shilton":85, "Paul Gascoigne":85, "Frank Rijkaard":87, "Ruud Gullit":89,
+  "Clarence Seedorf":85, "Patrick Kluivert":85, "Robin van Persie":87, "Wesley Sneijder":86,
+  "Gheorghe Hagi":88, "Marius Lăcătuș":78, "Davor Šuker":85, "Zvonimir Boban":83, "Robert Prosinečki":83,
+  "Predrag Mijatović":82, "Siniša Mihajlović":82, "Peter Crouch":78, "Jamie Vardy":81, "Diego Milito":82,
+  "Gonzalo Higuaín":86, "Juan Sebastián Verón":84, "Esteban Cambiasso":82, "Javier Mascherano":84,
+  "Walter Samuel":83, "Roberto Ayala":83, "Claudio Caniggia":84, "Jorge Valdano":82, "Mario Kempes":86,
+  "Diego Simeone":84,
+  "Hugo Sánchez":87, "Rafael Márquez":83, "Cuauhtémoc Blanco":82, "Jorge Campos":78, "René Higuita":80,
+  "Diego Godín":85, "Fernando Muslera":81, "Álvaro Recoba":81, "Alexis Sánchez":85, "Arturo Vidal":85,
+  "Claudio Bravo":81, "Ariel Ortega":83, "Fernando Redondo":84, "Gabriel Heinze":82, "Pablo Aimar":84,
+  "Carlos Tevez":85, "Ezequiel Lavezzi":81, "Lionel Scaloni":77, "Bruno Fernandes":86, "Bernardo Silva":85,
+  "João Moutinho":83, "Pepe":84, "Ricardo Carvalho":84, "Nani":82, "Fábio Coentrão":80,
+  "Rivelino":87, "Jairzinho":88, "Tostão":85, "Carlos Alberto Torres":86, "Paulo Roberto Falcão":87,
+  "Careca":85, "Bebeto":85, "Dunga":83, "Robinho":83, "Adriano":85,
+  "Julio Cesar":84, "Taffarel":84, "Dida":82, "Lúcio":85, "Juan":82,
+  "Maicon":84, "Hulk":83, "Fernandinho":83, "Willian":82, "Philippe Coutinho":85,
+  "Alisson Becker":87, "Ederson":86, "Marquinhos":84, "Emilio Butragueño":84, "Míchel":83,
+  "Fernando Hierro":86, "Andoni Zubizarreta":84, "Xabi Alonso":88, "Cesc Fàbregas":85, "Santi Cazorla":83,
+  "Isco":84, "Fernando Llorente":80, "Pepe Reina":83, "Joaquín":81, "José Antonio Reyes":83,
+  "Gaizka Mendieta":82, "Michel Salgado":80, "Luis Enrique":83, "Ivan Rakitić":85, "Mario Mandžukić":84,
+  "Darijo Srna":83, "Dejan Stanković":83, "Nemanja Vidić":86, "Branislav Ivanović":83, "Henrik Larsson":87,
+  "Fredrik Ljungberg":82, "Kim Källström":78, "Rafael van der Vaart":84, "Giovanni van Bronckhorst":83,
+  "Ronald Koeman":86, "Frank de Boer":84, "Ronald de Boer":83, "Giuseppe Bergomi":84, "Marco Materazzi":83,
+  "Gianluca Zambrotta":83, "Fabio Grosso":80, "Antonio Cassano":83, "Alessandro Costacurta":83,
+  "Demetrio Albertini":82, "Roberto Mancini":83, "Salvatore Schillaci":82, "Lothar Matthäus":89,
+  "Jürgen Klinsmann":88, "Rudi Völler":85, "Karl-Heinz Rummenigge":87, "Andreas Brehme":83,
+  "Oliver Bierhoff":82, "Mario Gómez":81, "Michel Platini":90, "Raymond Kopa":86, "Gary Lineker":87,
+  "Peter Beardsley":83, "Chris Waddle":83, "Glenn Hoddle":84, "Ryan Giggs":87,
+  "Lamine Yamal":89, "Pedri":87, "Gavi":84, "Jamal Musiala":87, "Florian Wirtz":87,
+  "Bukayo Saka":87, "Phil Foden":87, "Declan Rice":86, "William Saliba":85, "Alejandro Garnacho":82,
+  "Eduardo Camavinga":84, "Aurélien Tchouaméni":85, "Xavi Simons":83, "Nico Williams":85, "Ansu Fati":81,
+  "João Félix":82, "Ferran Torres":81, "Dušan Vlahović":84, "Victor Osimhen":87, "Khvicha Kvaratskhelia":86,
+  "Rafael Leão":85, "Federico Valverde":87, "Joško Gvardiol":85, "Alphonso Davies":85, "Achraf Hakimi":86,
+  "Trent Alexander-Arnold":86, "Endrick":82, "Kobbie Mainoo":81, "Warren Zaïre-Emery":81, "Jules Koundé":83,
+  "Martin Ødegaard":86, "Bruno Guimarães":83, "Rodri":89, "Rodrygo":84, "Julián Álvarez":84,
+  "Enzo Fernández":84, "Moisés Caicedo":83, "Jan Koller":84
+};
+
+function ratingFor(name, basePrice){
+  if(PRIME_RATINGS[name] !== undefined) return PRIME_RATINGS[name] + 8;
+  return Math.min(99, Math.round(63 + basePrice * 1.45)) + 8;
+}
+
+const ELIGIBLE_PLAYERS = PLAYERS.filter(([name,pos,base]) => ratingFor(name, base) >= 85);
+
+const PLAYER_TAGS = {
+  "Lionel Messi": ["Blitz","Curler","Momentum Dribbling"],
+  "Cristiano Ronaldo": ["Bullet Header","Power Shooter"],
+  "Alessandro Del Piero": ["Blitz","Curler"],
+  "Sergio Agüero": ["Blitz","Curler"],
+  "Lamine Yamal": ["Blitz","Curler"],
+  "Ronaldinho": ["Blitz","Curler"],
+  "Ruud Gullit": ["Bullet Header"],
+  "Jan Koller": ["Bullet Header"]
+};
+function tagsFor(name){
+  return PLAYER_TAGS[name] || [];
+}
+
+const TEAM_SIZE_CAP = 11;
+const POSITION_LIMITS = {
+  "Goalkeeper":1, "Centre Back":2, "Full Back":2,
+  "Attacking Mid":1, "Winger":2, "Striker":1, "Forward":2
+};
+const POS_ABBR = {
+  "Goalkeeper":"GK", "Centre Back":"CB", "Full Back":"FB", "Defensive Mid":"DM",
+  "Central Mid":"CM", "Attacking Mid":"AM", "Winger":"W", "Striker":"ST", "Forward":"FW"
+};
+function countInPosition(team, pos){
+  return team.squad.filter(p=>p.pos===pos).length;
+}
+function positionFull(team, pos){
+  const limit = POSITION_LIMITS[pos];
+  return limit !== undefined && countInPosition(team,pos) >= limit;
+}
+
+const STAR_PLAYERS = new Set(["Lionel Messi","Cristiano Ronaldo","Neymar Jr"]);
+let audioCtx;
+function playStarFanfare(){
+  try{
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const now = audioCtx.currentTime;
+    const notes = [523.25, 659.25, 783.99, 1046.5];
+    notes.forEach((freq, i)=>{
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      const start = now + i*0.12;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.28, start+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, start+0.35);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(start);
+      osc.stop(start+0.4);
+    });
+  }catch(e){ /* Web Audio unavailable, fail silently */ }
+}
+
+function loadPlayer(){
+  if(idx >= queue.length){ return finish(); }
+  const [name,pos,base] = queue[idx];
+  currentBid = 1;
+  leadingTeamIndex = -1;
+  bidStep = Math.max(1, Math.round(base*0.1));
+  document.getElementById('progress').textContent = `Player ${idx+1} of ${queue.length}`;
+  document.getElementById('playerName').textContent = name;
+  document.getElementById('playerPos').textContent = pos + ' · base ' + base;
+  document.getElementById('playerRating').textContent = 'OVR ' + ratingFor(name, base);
+  document.getElementById('playerTags').innerHTML = tagsFor(name)
+    .map(t=>`<span class="tag-chip">${t}</span>`).join('');
+  if(STAR_PLAYERS.has(name)) playStarFanfare();
+  document.getElementById('backBtn').disabled = history.length === 0;
+  renderBid();
+  renderTeamButtons();
+}
+
+function renderBid(){
+  document.getElementById('bidAmount').textContent = currentBid;
+  document.getElementById('leadingLine').innerHTML = leadingTeamIndex === -1
+    ? 'No bids yet'
+    : `Leading: <b>${teams[leadingTeamIndex].name}</b>`;
+  document.getElementById('soldBtn').disabled = leadingTeamIndex === -1;
+}
+
+function renderTeamButtons(){
+  const wrap = document.getElementById('teamButtons');
+  wrap.innerHTML = '';
+  const currentPos = queue[idx][1];
+  const limit = POSITION_LIMITS[currentPos];
+  const abbr = POS_ABBR[currentPos] || currentPos;
+  teams.forEach((t,i)=>{
+    const nextBid = currentBid + (leadingTeamIndex===-1 ? 0 : bidStep);
+    const bidIfClicked = leadingTeamIndex===-1 ? currentBid : currentBid + bidStep;
+    const squadFull = t.squad.length >= TEAM_SIZE_CAP;
+    const full = squadFull || positionFull(t, currentPos);
+    const canBid = !full && t.budget >= bidIfClicked && i !== leadingTeamIndex;
+    const btn = document.createElement('button');
+    btn.className = 'team-btn' + (i===leadingTeamIndex ? ' leading-team' : '');
+    btn.disabled = !canBid;
+    const used = countInPosition(t, currentPos);
+    const statusLine = squadFull
+      ? `Squad full (${t.squad.length}/${TEAM_SIZE_CAP})`
+      : full
+      ? `${abbr} full (${used}/${limit})`
+      : `${t.budget} left · bid ${bidIfClicked}`;
+    btn.innerHTML = `<span class="tname">${t.name}</span><span class="tbudget">${statusLine}</span>`;
+    btn.onclick = ()=>placeBid(i);
+    wrap.appendChild(btn);
+  });
+}
+
+function placeBid(teamIndex){
+  const currentPos = queue[idx][1];
+  if(teams[teamIndex].squad.length >= TEAM_SIZE_CAP) return;
+  if(positionFull(teams[teamIndex], currentPos)) return;
+  if(leadingTeamIndex !== -1){ currentBid += bidStep; }
+  leadingTeamIndex = teamIndex;
+  renderBid();
+  renderTeamButtons();
+}
+
+function sellPlayer(){
+  if(leadingTeamIndex === -1) return;
+  history.push({idx, teams: JSON.parse(JSON.stringify(teams))});
+  const [name,pos,base] = queue[idx];
+  const team = teams[leadingTeamIndex];
+  team.budget -= currentBid;
+  team.squad.push({name,pos,price:currentBid,rating:ratingFor(name, base),tags:tagsFor(name)});
+  idx++;
+  loadPlayer();
+}
+
+function skipPlayer(){
+  history.push({idx, teams: JSON.parse(JSON.stringify(teams))});
+  idx++;
+  loadPlayer();
+}
+
+function goBack(){
+  if(history.length === 0) return;
+  const prev = history.pop();
+  idx = prev.idx;
+  teams = prev.teams;
+  loadPlayer();
+}
+
+function finish(){
+  document.getElementById('auction').classList.add('hidden');
+  document.getElementById('results').classList.remove('hidden');
+  const body = document.getElementById('resultsBody');
+  body.innerHTML = '';
+
+  const stats = teams.map(t=>({
+    team:t,
+    totalRating: t.squad.reduce((s,p)=>s+p.rating,0),
+    avgRating: t.squad.length ? Math.round(t.squad.reduce((s,p)=>s+p.rating,0)/t.squad.length) : 0
+  }));
+  const best = stats.reduce((a,b)=> b.totalRating > a.totalRating ? b : a, stats[0]);
+
+  if(best && best.totalRating > 0){
+    const winIdx = teams.indexOf(best.team);
+    if(winIdx >= 0 && winIdx < 4){ shopCoinsByTeam[winIdx+1] += 100; }
+  }
+
+  const banner = document.createElement('div');
+  banner.className = 'winner-banner';
+  banner.innerHTML = best && best.totalRating > 0
+    ? `<div class="wtitle">Best squad on the pitch</div>
+       <div class="wname">🏆 ${best.team.name}</div>
+       <div class="wstat">Combined rating ${best.totalRating} · average ${best.avgRating} OVR across ${best.team.squad.length} players</div>
+       <div class="wstat">+100 coins added to the Player shop</div>`
+    : `<div class="wtitle">No winner</div><div class="wname">Nobody bought a player</div>`;
+  document.getElementById('resultsBody').before(banner);
+
+  teams.forEach(t=>{
+    const spent = t.squad.reduce((s,p)=>s+p.price,0);
+    const totalRating = t.squad.reduce((s,p)=>s+p.rating,0);
+    const div = document.createElement('div');
+    div.className = 'card team-block';
+    let rows = t.squad
+      .slice()
+      .sort((a,b)=>b.rating-a.rating)
+      .map(p=>`<tr><td>${p.name}</td><td>${p.pos}</td><td>${(p.tags&&p.tags.length)?p.tags.join(', '):'—'}</td><td>${p.rating}</td><td>${p.price}</td></tr>`)
+      .join('');
+    if(!rows) rows = `<tr><td colspan="5" style="opacity:.6;">No players won</td></tr>`;
+    div.innerHTML = `
+      <h3>${t.name}${t===best.team && best.totalRating>0 ? ' 🏆' : ''}</h3>
+      <div class="stat">Spent ${spent} · ${t.budget} credits remaining · squad rating ${totalRating}</div>
+      <table>
+        <thead><tr><th>Player</th><th>Position</th><th>Tags</th><th>OVR</th><th>Price</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    body.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
+
