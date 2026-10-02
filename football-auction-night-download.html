@@ -196,6 +196,13 @@
   .battle-score{font-size:clamp(2rem,8vw,3.2rem);font-weight:900;color:#ffda7b;letter-spacing:.04em;margin:4px 0;}
   .battle-result-title{font-weight:800;font-size:1.15rem;}
   .battle-result-meta{font-size:.85rem;color:#b8cbd3;margin-top:6px;}
+  .goal-animation{position:relative;overflow:hidden;min-height:86px;margin:0 0 12px;border:1px solid rgba(255,218,123,.3);border-radius:12px;background:radial-gradient(ellipse at 50% 100%,rgba(31,145,91,.52),rgba(4,18,25,.78) 72%);}
+  .goal-net{position:absolute;right:10%;top:18px;width:64px;height:54px;border:2px solid rgba(255,255,255,.78);border-left:0;background:repeating-linear-gradient(0deg,transparent 0 9px,rgba(255,255,255,.22) 9px 10px),repeating-linear-gradient(90deg,transparent 0 12px,rgba(255,255,255,.2) 12px 13px);transform:perspective(70px) rotateY(-16deg);}
+  .goal-label{position:absolute;left:50%;top:9px;transform:translateX(-50%);color:#ffda7b;font-size:1.3rem;font-weight:1000;letter-spacing:.16em;text-shadow:0 0 18px rgba(255,218,123,.65);animation:goalPop .55s cubic-bezier(.2,1.6,.4,1) both;}
+  .goal-ball{position:absolute;left:12%;top:43px;font-size:1.8rem;filter:drop-shadow(0 3px 5px #0008);animation:goalShot 1.15s cubic-bezier(.18,.72,.24,1) both;}
+  @keyframes goalShot{0%{transform:translate(0,18px) rotate(-160deg) scale(.65);opacity:0}12%{opacity:1}75%{transform:translate(calc(70vw - 70px),-8px) rotate(500deg) scale(1.1)}100%{transform:translate(calc(70vw - 70px),-8px) rotate(600deg) scale(.65);opacity:.15}}
+  @keyframes goalPop{0%{transform:translateX(-50%) scale(.35);opacity:0}100%{transform:translateX(-50%) scale(1);opacity:1}}
+  @media(prefers-reduced-motion:reduce){.goal-ball,.goal-label{animation:none}}
   .version-badge{display:inline-flex;align-items:center;gap:7px;margin-top:2px;padding:5px 9px;border:1px solid var(--line);border-radius:999px;color:#b9cbd4;background:rgba(255,255,255,.04);font:600 .68rem ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em;cursor:pointer;}
   .version-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);}
   .redeem-row{margin-top:18px;padding:18px;border:1px solid rgba(244,189,80,.32);border-radius:14px;background:linear-gradient(140deg,rgba(244,189,80,.09),rgba(4,17,25,.38));}
@@ -567,13 +574,14 @@ function startBattle(){
     document.getElementById('battleResult').innerHTML='<div class="battle-result">Both teams need at least one player bought from the Player Shop before they can battle.</div>';
     return;
   }
-  const strength=s=>s.reduce((sum,p)=>sum+p.rating,0)/s.length;
+  const strength=s=>s.reduce((sum,p)=>sum+Math.min(99,Number(p.rating)||0),0)/s.length;
   const homeStrength=strength(homeSquad), awayStrength=strength(awaySquad);
   const goals=(forStrength,againstStrength)=>Math.max(0,Math.min(5,Math.floor(Math.random()*3)+Math.max(-1,Math.min(2,Math.round((forStrength-againstStrength)/10)))));
   const homeGoals=goals(homeStrength,awayStrength), awayGoals=goals(awayStrength,homeStrength);
   const homeName=teams[home-1]?.name||('Team '+home), awayName=teams[away-1]?.name||('Team '+away);
   const winner=homeGoals===awayGoals?'It’s a draw!':(homeGoals>awayGoals?homeName:awayName)+' win!';
-  document.getElementById('battleResult').innerHTML='<div class="battle-result"><div class="battle-result-title">'+winner+'</div><div class="battle-score">'+homeGoals+' — '+awayGoals+'</div><div>'+homeName+' <span style="opacity:.65">vs</span> '+awayName+'</div><div class="battle-result-meta">Squad strength '+Math.round(homeStrength)+' ('+homeSquad.length+' players) · '+Math.round(awayStrength)+' ('+awaySquad.length+' players)</div></div>';
+  const goalAnimation=homeGoals+awayGoals>0?'<div class="goal-animation" role="status" aria-label="Goal celebration"><div class="goal-net"></div><div class="goal-label">GOAL!</div><div class="goal-ball">⚽</div></div>':'';
+  document.getElementById('battleResult').innerHTML='<div class="battle-result">'+goalAnimation+'<div class="battle-result-title">'+winner+'</div><div class="battle-score">'+homeGoals+' — '+awayGoals+'</div><div>'+homeName+' <span style="opacity:.65">vs</span> '+awayName+'</div><div class="battle-result-meta">Squad strength '+Math.round(homeStrength)+' ('+homeSquad.length+' players) · '+Math.round(awayStrength)+' ('+awaySquad.length+' players)</div></div>';
 }
 function selectLineupTeam(teamNumber){
   if(teamNumber<1 || teamNumber>configuredTeamCount()) return;
@@ -894,8 +902,8 @@ const PRIME_RATINGS = {
 };
 
 function ratingFor(name, basePrice){
-  if(PRIME_RATINGS[name] !== undefined) return PRIME_RATINGS[name] + 8;
-  return Math.min(99, Math.round(63 + basePrice * 1.45)) + 8;
+  if(PRIME_RATINGS[name] !== undefined) return Math.min(99, PRIME_RATINGS[name] + 8);
+  return Math.min(99, Math.round(63 + basePrice * 1.45) + 8);
 }
 
 const ELIGIBLE_PLAYERS = PLAYERS.filter(([name,pos,base]) => ratingFor(name, base) >= 85);
