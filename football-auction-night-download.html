@@ -138,6 +138,54 @@
   .lineup-team-toggle{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 14px;}
   .lineup-team-toggle button{padding:9px 8px;}
   @media(max-width:480px){.lineup-pitch{min-height:560px}.lineup-player{font-size:.68rem;padding:6px 2px}}
+
+  /* Stadium-night visual refresh */
+  :root{
+    --pitch:#07131d; --pitch2:#0b1b27; --chalk:#f3f7fa; --gold:#f4bd50;
+    --gold-dim:#a87924; --navy:#102434; --panel:#10212d; --red:#c84343;
+    --line:rgba(187,216,229,.16);
+  }
+  body{
+    min-height:100vh;
+    background:radial-gradient(ellipse at 50% -18%,#174537 0%,#0b2028 40%,#07131d 78%);
+    color:var(--chalk);
+  }
+  .wrap{max-width:880px;padding:34px 22px 68px;}
+  h1{font-size:clamp(1.65rem,4vw,2.15rem);letter-spacing:-.5px;}
+  .sub{color:#b8d0d9;margin-bottom:24px;}
+  .topnav{align-items:center;margin-bottom:22px;}
+  .topnav h1:before{content:"⚽";font-size:.8em;margin-right:10px;}
+  .card,.shop-scroll{
+    background:linear-gradient(145deg,rgba(21,45,58,.97),rgba(12,30,41,.98));
+    border:1px solid rgba(185,218,231,.15);border-radius:18px;
+    box-shadow:0 16px 40px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.035);
+  }
+  .card{padding:24px;margin-bottom:18px;}
+  label{color:#c6d7df;font-weight:650;letter-spacing:.02em;}
+  input[type=number],input[type=text]{border-radius:10px;border-color:var(--line);background:rgba(4,17,25,.5);}
+  button{border-radius:11px;padding:12px 17px;transition:transform .16s ease,filter .16s ease,box-shadow .16s ease;}
+  button:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.08);}
+  .btn-gold{background:linear-gradient(135deg,#ffd879,#e9a82f);color:#18202a;box-shadow:0 6px 18px rgba(232,168,47,.2);}
+  .btn-outline{border-color:rgba(198,220,230,.24);background:rgba(255,255,255,.035);}
+  .btn-red{background:linear-gradient(135deg,#e55e55,#a92d3a);}
+  .team-btn{border-radius:13px;background:linear-gradient(145deg,#173447,#102536);}
+  .team-btn.leading-team{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset,0 0 20px rgba(244,189,80,.12);}
+  .shop-overlay{background:rgba(5,16,24,.97);backdrop-filter:blur(12px);}
+  .player-stage{padding:36px 22px;background:radial-gradient(ellipse at 50% 0%,rgba(40,103,76,.35),transparent 72%),linear-gradient(145deg,#142e3a,#0e202c);}
+  .player-name{font-size:clamp(1.8rem,6vw,2.6rem);letter-spacing:-.5px;}
+  .rating-badge{background:rgba(244,189,80,.12);border-color:var(--gold);}
+  .bid-amount{font-size:clamp(2.8rem,9vw,4rem);color:#ffcf69;text-shadow:0 0 25px rgba(244,189,80,.16);}
+  th{color:#aec3cd;}
+  .winner-banner{border-radius:16px;background:linear-gradient(120deg,#ffda7c,#e8a633);box-shadow:0 12px 30px rgba(232,166,51,.18);}
+  .lineup-pitch{
+    min-height:660px;border:2px solid rgba(225,248,236,.72);border-radius:18px;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.045) 0 82px,rgba(0,0,0,.035) 82px 164px),linear-gradient(140deg,#16784f,#0d5b3c);
+    box-shadow:0 18px 42px rgba(0,0,0,.28),inset 0 0 55px rgba(2,25,16,.2);
+  }
+  .lineup-player{background:rgba(7,27,31,.9);border:1px solid rgba(255,255,255,.78);border-radius:14px;backdrop-filter:blur(5px);}
+  .lineup-player b{color:#ffda7b;}
+  .lineup-team-toggle .btn-gold{border:1px solid #ffda7b;}
+  @media(max-width:520px){.wrap{padding:22px 14px 48px}.card{padding:18px}.topnav{align-items:flex-start}.lineup-pitch{min-height:590px}}
 </style>
 </head>
 <body>
