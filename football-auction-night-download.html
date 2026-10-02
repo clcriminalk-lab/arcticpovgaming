@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 12546)
-Total output lines: 904
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -386,7 +383,50 @@ const PLAYERS = [
   ["Lamine Yamal","Winger",22],["Pedri","Central Mid",18],["Gavi","Central Mid",15],
   ["Jamal Musiala","Attacking Mid",18],["Florian Wirtz","Attacking Mid",18],["Bukayo Saka","Winger",18],
   ["Phil Foden","Attacking Mid",18],["Declan Rice","Central Mid",16],["William Saliba","Centre Back",14],
-  ["Alejandro Garnacho","Winger",12],["Eduardo Camavinga…546 tokens truncated…ngTeamIndex = -1;
+  ["Alejandro Garnacho","Winger",12],["Eduardo Camavinga","Central Mid",14],["Aurélien Tchouaméni","Defensive Mid",14],
+  ["Xavi Simons","Attacking Mid",13],["Nico Williams","Winger",15],["Ansu Fati","Winger",11],
+  ["João Félix","Attacking Mid",12],["Ferran Torres","Winger",11],["Dušan Vlahović","Striker",14],
+  ["Victor Osimhen","Striker",17],["Khvicha Kvaratskhelia","Winger",16],["Rafael Leão","Winger",15],
+  ["Federico Valverde","Central Mid",17],["Joško Gvardiol","Centre Back",15],["Alphonso Davies","Full Back",15],
+  ["Achraf Hakimi","Full Back",15],["Trent Alexander-Arnold","Full Back",15],["Endrick","Striker",13],
+  ["Kobbie Mainoo","Central Mid",12],["Warren Zaïre-Emery","Central Mid",12],["Jules Koundé","Centre Back",13],
+  ["Martin Ødegaard","Attacking Mid",16],["Bruno Guimarães","Central Mid",13],["Rodri","Defensive Mid",18],
+  ["Rodrygo","Winger",14],["Julián Álvarez","Striker",14],["Enzo Fernández","Central Mid",14],
+  ["Moisés Caicedo","Defensive Mid",13],["Jan Koller","Striker",13],
+  ["Marco Rinaldi","Striker",12],["Kofi Boateng","Striker",10],["Diego Serrano","Striker",9],
+  ["Lucas Ferreira","Winger",8],["Youssef Amrani","Winger",7],["Ivan Petrov","Winger",6],
+  ["Tomás Herrera","Attacking Mid",11],["Kenji Watanabe","Attacking Mid",8],
+  ["Nils Bergström","Central Mid",9],["Sami Al-Farsi","Central Mid",7],["Owen Fitzgerald","Central Mid",6],
+  ["Rafael Costa","Defensive Mid",7],["Milan Dvořák","Defensive Mid",6],
+  ["Bruno Alves","Centre Back",8],["Erik Johansson","Centre Back",7],["Kwame Asante","Centre Back",6],
+  ["Hugo Delacroix","Full Back",6],["Ravi Chandran","Full Back",5],["Aleksander Nowak","Full Back",5],
+  ["Diego Martins","Goalkeeper",9],["Felix Obi","Goalkeeper",6],
+  ["Santiago Reyes","Striker",7],["Mateo Rossi","Winger",5],["Jonas Lindqvist","Centre Back",5]
+];
+
+let teams = [];
+let queue = [];
+let idx = 0;
+let currentBid = 0;
+let leadingTeamIndex = -1;
+let bidStep = 1;
+let history = [];
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function backToMenu(){
+  teams = [];
+  queue = [];
+  idx = 0;
+  currentBid = 0;
+  leadingTeamIndex = -1;
   history = [];
   document.getElementById('auction').classList.add('hidden');
   document.getElementById('results').classList.add('hidden');
