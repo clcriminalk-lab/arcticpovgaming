@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 12546)
-Total output lines: 904
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,21 +123,6 @@ Total output lines: 904
   .winner-banner .wtitle{font-size:0.8rem; text-transform:none; opacity:0.75; margin-bottom:2px; font-weight:700;}
   .winner-banner .wname{font-size:1.4rem;}
   .winner-banner .wstat{font-size:0.85rem; font-weight:600; margin-top:4px; opacity:0.85;}
-  .lineup-pitch{
-    min-height:620px; padding:22px 12px; border:2px solid rgba(255,255,255,.75); border-radius:14px;
-    background:linear-gradient(90deg,rgba(255,255,255,.08) 50%,transparent 50%),#176b45;
-    background-size:100% 100%; position:relative; display:flex; flex-direction:column;
-    justify-content:space-around; overflow:hidden;
-  }
-  .lineup-pitch:before{content:"";position:absolute;inset:50% 0 auto;border-top:2px solid rgba(255,255,255,.65);}
-  .lineup-pitch:after{content:"";position:absolute;width:110px;height:110px;border:2px solid rgba(255,255,255,.65);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);}
-  .lineup-row{display:flex;justify-content:space-evenly;align-items:center;gap:6px;position:relative;z-index:1;}
-  .lineup-player{width:min(22%,130px);min-height:62px;padding:8px 4px;border-radius:10px;text-align:center;color:#fff;background:rgba(9,35,24,.84);border:1px solid rgba(255,255,255,.7);font-size:.78rem;box-shadow:0 2px 8px #0004;}
-  .lineup-player b{display:block;color:#f1cb67;font-size:.72rem;margin-bottom:3px;}
-  .lineup-player span{display:block;overflow-wrap:anywhere;}
-  .lineup-team-toggle{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 14px;}
-  .lineup-team-toggle button{padding:9px 8px;}
-  @media(max-width:480px){.lineup-pitch{min-height:560px}.lineup-player{font-size:.68rem;padding:6px 2px}}
 </style>
 </head>
 <body>
@@ -168,22 +150,6 @@ Total output lines: 904
     <button class="btn-gold" onclick="startAuction()">Start auction</button>
     <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openBuild()">🛠️ Build</button>
     <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openShop()">🛒 Player shop</button>
-    <button class="btn-gold" style="width:100%; margin-top:10px;" onclick="openLineup()">▶ Play</button>
-  </div>
-
-  <div id="lineup" class="hidden">
-    <div class="shop-header">
-      <div><h1>Starting XI</h1><p class="sub">4–3–3 formation</p></div>
-      <button class="btn-outline" onclick="closeLineup()">✕ Main menu</button>
-    </div>
-    <div class="lineup-team-toggle" role="group" aria-label="Select team for lineup">
-      <button id="lineupTeam1" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(1)">Team 1</button>
-      <button id="lineupTeam2" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(2)">Team 2</button>
-      <button id="lineupTeam3" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(3)">Team 3</button>
-      <button id="lineupTeam4" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(4)">Team 4</button>
-    </div>
-    <div class="lineup-pitch" id="lineupPitch" aria-label="Football team lineup in a 4-3-3 formation"></div>
-    <div class="actions-row"><button class="btn-outline" onclick="openBuild()">🛠️ Choose squad</button></div>
   </div>
 
   <!-- BUILD (free squad builder, no bidding) -->
@@ -346,7 +312,131 @@ const PLAYERS = [
   ["Zvonimir Boban","Central Mid",12],["Robert Prosinečki","Attacking Mid",12],["Predrag Mijatović","Striker",12],
   ["Siniša Mihajlović","Full Back",11],["Peter Crouch","Striker",9],["Jamie Vardy","Striker",11],
   ["Diego Milito","Striker",12],["Gonzalo Higuaín","Striker",15],["Juan Sebastián Verón","Central Mid",13],
-  ["Esteban Cambiasso","Central Mid",12],["Javier Mascherano","Defensive Mid",13],["Walt…2546 tokens truncated…x 10px; font-size:0.78rem;" onclick="removeFromBuild('${p.name.replace(/'/g,"\\'")}')">Remove</button>
+  ["Esteban Cambiasso","Central Mid",12],["Javier Mascherano","Defensive Mid",13],["Walter Samuel","Centre Back",12],
+  ["Roberto Ayala","Centre Back",12],["Claudio Caniggia","Winger",13],["Jorge Valdano","Striker",12],
+  ["Mario Kempes","Striker",15],["Diego Simeone","Defensive Mid",13],
+  ["Hugo Sánchez","Striker",15],["Rafael Márquez","Centre Back",12],["Cuauhtémoc Blanco","Attacking Mid",12],
+  ["Jorge Campos","Goalkeeper",9],["René Higuita","Goalkeeper",10],["Diego Godín","Centre Back",13],
+  ["Fernando Muslera","Goalkeeper",11],["Álvaro Recoba","Attacking Mid",11],["Alexis Sánchez","Winger",14],
+  ["Arturo Vidal","Central Mid",14],["Claudio Bravo","Goalkeeper",11],["Ariel Ortega","Attacking Mid",12],
+  ["Fernando Redondo","Central Mid",13],["Gabriel Heinze","Centre Back",11],["Pablo Aimar","Attacking Mid",13],
+  ["Carlos Tevez","Striker",14],["Ezequiel Lavezzi","Winger",11],["Lionel Scaloni","Full Back",8],
+  ["Bruno Fernandes","Attacking Mid",15],["Bernardo Silva","Winger",14],["João Moutinho","Central Mid",12],
+  ["Pepe","Centre Back",13],["Ricardo Carvalho","Centre Back",13],["Nani","Winger",12],
+  ["Fábio Coentrão","Full Back",10],["Rivelino","Winger",15],["Jairzinho","Winger",16],
+  ["Tostão","Striker",14],["Carlos Alberto Torres","Full Back",14],["Paulo Roberto Falcão","Central Mid",15],
+  ["Careca","Striker",14],["Bebeto","Striker",14],["Dunga","Defensive Mid",12],
+  ["Robinho","Winger",13],["Adriano","Striker",14],["Julio Cesar","Goalkeeper",12],
+  ["Taffarel","Goalkeeper",12],["Dida","Goalkeeper",11],["Lúcio","Centre Back",14],
+  ["Juan","Centre Back",11],["Maicon","Full Back",13],["Hulk","Winger",12],
+  ["Fernandinho","Defensive Mid",12],["Willian","Winger",12],["Philippe Coutinho","Attacking Mid",14],
+  ["Alisson Becker","Goalkeeper",15],["Ederson","Goalkeeper",14],["Marquinhos","Centre Back",13],
+  ["Emilio Butragueño","Striker",13],["Míchel","Attacking Mid",12],["Fernando Hierro","Centre Back",14],
+  ["Andoni Zubizarreta","Goalkeeper",13],["Xabi Alonso","Central Mid",16],["Cesc Fàbregas","Central Mid",14],
+  ["Santi Cazorla","Attacking Mid",12],["Isco","Attacking Mid",13],["Fernando Llorente","Striker",10],
+  ["Pepe Reina","Goalkeeper",12],["Joaquín","Winger",11],["José Antonio Reyes","Winger",12],
+  ["Gaizka Mendieta","Central Mid",11],["Michel Salgado","Full Back",10],["Luis Enrique","Attacking Mid",12],
+  ["Ivan Rakitić","Central Mid",14],["Mario Mandžukić","Striker",13],["Darijo Srna","Full Back",12],
+  ["Dejan Stanković","Central Mid",12],["Nemanja Vidić","Centre Back",14],["Branislav Ivanović","Centre Back",12],
+  ["Henrik Larsson","Striker",15],["Fredrik Ljungberg","Winger",11],["Kim Källström","Central Mid",9],
+  ["Rafael van der Vaart","Attacking Mid",13],["Giovanni van Bronckhorst","Full Back",12],["Ronald Koeman","Centre Back",14],
+  ["Frank de Boer","Centre Back",13],["Ronald de Boer","Attacking Mid",12],["Giuseppe Bergomi","Centre Back",13],
+  ["Marco Materazzi","Centre Back",12],["Gianluca Zambrotta","Full Back",12],["Fabio Grosso","Full Back",10],
+  ["Antonio Cassano","Striker",12],["Alessandro Costacurta","Centre Back",12],["Demetrio Albertini","Central Mid",11],
+  ["Roberto Mancini","Striker",12],["Salvatore Schillaci","Striker",11],["Lothar Matthäus","Central Mid",17],
+  ["Jürgen Klinsmann","Striker",16],["Rudi Völler","Striker",14],["Karl-Heinz Rummenigge","Striker",15],
+  ["Andreas Brehme","Full Back",12],["Oliver Bierhoff","Striker",11],["Mario Gómez","Striker",11],
+  ["Michel Platini","Attacking Mid",18],["Raymond Kopa","Winger",14],["Gary Lineker","Striker",16],
+  ["Peter Beardsley","Attacking Mid",12],["Chris Waddle","Winger",12],["Glenn Hoddle","Attacking Mid",13],
+  ["Ryan Giggs","Winger",15],
+  ["Lamine Yamal","Winger",22],["Pedri","Central Mid",18],["Gavi","Central Mid",15],
+  ["Jamal Musiala","Attacking Mid",18],["Florian Wirtz","Attacking Mid",18],["Bukayo Saka","Winger",18],
+  ["Phil Foden","Attacking Mid",18],["Declan Rice","Central Mid",16],["William Saliba","Centre Back",14],
+  ["Alejandro Garnacho","Winger",12],["Eduardo Camavinga","Central Mid",14],["Aurélien Tchouaméni","Defensive Mid",14],
+  ["Xavi Simons","Attacking Mid",13],["Nico Williams","Winger",15],["Ansu Fati","Winger",11],
+  ["João Félix","Attacking Mid",12],["Ferran Torres","Winger",11],["Dušan Vlahović","Striker",14],
+  ["Victor Osimhen","Striker",17],["Khvicha Kvaratskhelia","Winger",16],["Rafael Leão","Winger",15],
+  ["Federico Valverde","Central Mid",17],["Joško Gvardiol","Centre Back",15],["Alphonso Davies","Full Back",15],
+  ["Achraf Hakimi","Full Back",15],["Trent Alexander-Arnold","Full Back",15],["Endrick","Striker",13],
+  ["Kobbie Mainoo","Central Mid",12],["Warren Zaïre-Emery","Central Mid",12],["Jules Koundé","Centre Back",13],
+  ["Martin Ødegaard","Attacking Mid",16],["Bruno Guimarães","Central Mid",13],["Rodri","Defensive Mid",18],
+  ["Rodrygo","Winger",14],["Julián Álvarez","Striker",14],["Enzo Fernández","Central Mid",14],
+  ["Moisés Caicedo","Defensive Mid",13],["Jan Koller","Striker",13],
+  ["Marco Rinaldi","Striker",12],["Kofi Boateng","Striker",10],["Diego Serrano","Striker",9],
+  ["Lucas Ferreira","Winger",8],["Youssef Amrani","Winger",7],["Ivan Petrov","Winger",6],
+  ["Tomás Herrera","Attacking Mid",11],["Kenji Watanabe","Attacking Mid",8],
+  ["Nils Bergström","Central Mid",9],["Sami Al-Farsi","Central Mid",7],["Owen Fitzgerald","Central Mid",6],
+  ["Rafael Costa","Defensive Mid",7],["Milan Dvořák","Defensive Mid",6],
+  ["Bruno Alves","Centre Back",8],["Erik Johansson","Centre Back",7],["Kwame Asante","Centre Back",6],
+  ["Hugo Delacroix","Full Back",6],["Ravi Chandran","Full Back",5],["Aleksander Nowak","Full Back",5],
+  ["Diego Martins","Goalkeeper",9],["Felix Obi","Goalkeeper",6],
+  ["Santiago Reyes","Striker",7],["Mateo Rossi","Winger",5],["Jonas Lindqvist","Centre Back",5]
+];
+
+let teams = [];
+let queue = [];
+let idx = 0;
+let currentBid = 0;
+let leadingTeamIndex = -1;
+let bidStep = 1;
+let history = [];
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function backToMenu(){
+  teams = [];
+  queue = [];
+  idx = 0;
+  currentBid = 0;
+  leadingTeamIndex = -1;
+  history = [];
+  document.getElementById('auction').classList.add('hidden');
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('setup').classList.remove('hidden');
+  const banner = document.querySelector('.winner-banner');
+  if(banner) banner.remove();
+}
+
+let buildSquad = [];
+
+function openBuild(){
+  document.getElementById('build').classList.remove('hidden');
+  renderBuildList();
+  renderBuildSquad();
+}
+function closeBuild(){
+  document.getElementById('build').classList.add('hidden');
+}
+function addToBuild(name,pos,base){
+  if(buildSquad.length >= TEAM_SIZE_CAP) return;
+  const used = buildSquad.filter(p=>p.pos===pos).length;
+  const limit = POSITION_LIMITS[pos];
+  if(limit !== undefined && used >= limit) return;
+  buildSquad.push({name,pos,rating:ratingFor(name,base)});
+  renderBuildList();
+  renderBuildSquad();
+}
+function removeFromBuild(name){
+  buildSquad = buildSquad.filter(p=>p.name!==name);
+  renderBuildList();
+  renderBuildSquad();
+}
+function renderBuildSquad(){
+  document.getElementById('buildCount').textContent = `${buildSquad.length}/${TEAM_SIZE_CAP} players selected`;
+  const body = document.getElementById('buildSquadBody');
+  if(!buildSquad.length){ body.innerHTML = 'No players yet.'; return; }
+  const totalRating = buildSquad.reduce((s,p)=>s+p.rating,0);
+  body.innerHTML = `<div style="margin-bottom:8px;">Squad rating: <b>${totalRating}</b></div>` +
+    buildSquad.map(p=>`<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid var(--line);">
+      <span>${p.name} <span style="opacity:.6;">(${p.pos}, ${p.rating})</span></span>
+      <button class="btn-outline" style="padding:4px 10px; font-size:0.78rem;" onclick="removeFromBuild('${p.name.replace(/'/g,"\\'")}')">Remove</button>
     </div>`).join('');
 }
 function renderBuildList(){
