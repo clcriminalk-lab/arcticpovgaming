@@ -8,6 +8,9 @@ const savedGames = new Set(JSON.parse(localStorage.getItem('arcticpov-library') 
 const libraryLink = document.querySelector('.main-nav a[href="#library"]');
 const discoverLink = document.querySelector('.main-nav a[href="#discover"]');
 const libraryCount = libraryLink.querySelector('.nav-count');
+for (const title of savedGames) {
+  if (!cards.some((card) => card.dataset.title === title)) savedGames.delete(title);
+}
 
 function updateLibrary() {
   libraryCount.textContent = String(savedGames.size).padStart(2, '0');
