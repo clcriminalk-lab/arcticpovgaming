@@ -57,6 +57,8 @@
     margin-bottom:12px;
   }
   .topnav h1{margin-bottom:2px;}
+  .topnav-actions{display:flex;flex-direction:column;align-items:flex-end;gap:7px;}
+  .save-status{font-size:.72rem;color:#a9bdc7;text-align:right;}
   .shop-link{flex-shrink:0; white-space:nowrap;}
 
   .shop-overlay{
@@ -214,7 +216,11 @@
       <p class="sub">Build your squad, one bid at a time.</p>
       <button type="button" class="version-badge" aria-label="Game version 1.1.0. Click to open the redeem option." onclick="revealRedeemOption()">VERSION 1.1.0 · BUILD 2026.10.02</button>
     </div>
-    <button class="btn-outline shop-link" onclick="openShop()">ℹ️ Player info</button>
+    <div class="topnav-actions">
+      <button class="btn-outline" onclick="saveGameProgress(true)">💾 Save progress</button>
+      <button class="btn-outline shop-link" onclick="openShop()">ℹ️ Player info</button>
+      <span id="saveStatus" class="save-status" aria-live="polite">Progress auto-saves on this device</span>
+    </div>
   </div>
 
   <!-- SETUP -->
@@ -232,6 +238,7 @@
     <button class="btn-gold" onclick="startAuction()">Start auction</button>
     <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openBuild()">🛠️ Build</button>
     <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openShop()">🛒 Player shop</button>
+    <button id="resumeGameBtn" class="btn-outline hidden" style="width:100%; margin-top:10px;" onclick="resumeGameProgress()">↻ Resume saved game</button>
     <button class="btn-gold" style="width:100%; margin-top:10px;" onclick="openLineup()">▶ Play</button>
   </div>
 
@@ -1031,7 +1038,7 @@ function goBack(){
   loadPlayer();
 }
 
-function finish(){
+function finish(grantReward=true){
   document.getElementById('auction').classList.add('hidden');
   document.getElementById('results').classList.remove('hidden');
   const body = document.getElementById('resultsBody');
@@ -1044,7 +1051,7 @@ function finish(){
   }));
   const best = stats.reduce((a,b)=> b.totalRating > a.totalRating ? b : a, stats[0]);
 
-  if(best && best.totalRating > 0){
+  if(grantReward && best && best.totalRating > 0){
     const winIdx = teams.indexOf(best.team);
     if(winIdx >= 0){ shopCoinsByTeam[winIdx+1] += 100; }
   }
@@ -1080,6 +1087,99 @@ function finish(){
     body.appendChild(div);
   });
 }
+
+const GAME_SAVE_KEY = 'football-auction-night-save-v1';
+let restoringGameProgress = false;
+function currentGameView(){
+  if(!document.getElementById('auction').classList.contains('hidden')) return 'auction';
+  if(!document.getElementById('results').classList.contains('hidden')) return 'results';
+  if(!document.getElementById('lineup').classList.contains('hidden')) return 'lineup';
+  return 'menu';
+}
+function saveGameProgress(manual=false){
+  try{
+    const state={version:1,view:currentGameView(),teams,queue,idx,currentBid,leadingTeamIndex,bidStep,history,
+      shopCoinsByTeam,shopSquadByTeam,redeemedByTeam,buildSquadsByTeam,
+      shopActiveTeam,lineupTeam,buildActiveTeam,
+      numTeams:document.getElementById('numTeams').value,budget:document.getElementById('budget').value,
+      battleResult:document.getElementById('battleResult')?.innerHTML||''};
+    localStorage.setItem(GAME_SAVE_KEY,JSON.stringify(state));
+    const status=document.getElementById('saveStatus');
+    if(status) status.textContent=manual?'Progress saved on this device':'Progress auto-saved';
+    const resume=document.getElementById('resumeGameBtn');
+    if(resume) resume.classList.remove('hidden');
+    return true;
+  }catch(error){
+    const status=document.getElementById('saveStatus');
+    if(status) status.textContent='Could not save in this browser';
+    return false;
+  }
+}
+function initializeSavedProgress(){
+  try{
+    if(localStorage.getItem(GAME_SAVE_KEY)){
+      document.getElementById('resumeGameBtn').classList.remove('hidden');
+      document.getElementById('saveStatus').textContent='Saved progress available';
+    }
+  }catch(error){}
+}
+function resumeGameProgress(){
+  let state;
+  try{state=JSON.parse(localStorage.getItem(GAME_SAVE_KEY)||'null');}catch(error){state=null;}
+  if(!state){document.getElementById('saveStatus').textContent='No saved progress found';return;}
+  restoringGameProgress=true;
+  try{
+    teams=state.teams||[]; queue=state.queue||[]; idx=Number(state.idx)||0;
+    currentBid=Number(state.currentBid)||1; leadingTeamIndex=state.leadingTeamIndex??-1;
+    bidStep=Number(state.bidStep)||1; history=state.history||[];
+    for(const key of Object.keys(shopCoinsByTeam)){
+      if(state.shopCoinsByTeam?.[key]!==undefined) shopCoinsByTeam[key]=state.shopCoinsByTeam[key];
+      if(state.shopSquadByTeam?.[key]) shopSquadByTeam[key]=state.shopSquadByTeam[key];
+      if(state.redeemedByTeam?.[key]!==undefined) redeemedByTeam[key]=state.redeemedByTeam[key];
+      if(state.buildSquadsByTeam?.[key]) buildSquadsByTeam[key]=state.buildSquadsByTeam[key];
+    }
+    shopActiveTeam=state.shopActiveTeam||1; lineupTeam=state.lineupTeam||1;
+    buildActiveTeam=state.buildActiveTeam||1;
+    buildSquad=buildSquadsByTeam[buildActiveTeam]||[];
+    document.getElementById('numTeams').value=state.numTeams||teams.length||4;
+    document.getElementById('budget').value=state.budget||100;
+    ['auction','results','lineup','build','shop'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+    document.getElementById('setup').classList.add('hidden');
+    if(state.view==='auction'&&queue.length&&idx<queue.length){
+      document.getElementById('auction').classList.remove('hidden');
+      const savedBid=currentBid,savedLeader=leadingTeamIndex;
+      loadPlayer(); currentBid=savedBid; leadingTeamIndex=savedLeader; renderBid(); renderTeamButtons();
+    }else if(state.view==='results'&&teams.length){
+      finish(false);
+    }else if(state.view==='lineup'){
+      document.getElementById('lineup').classList.remove('hidden');
+      renderBattleTeams(); renderLineup();
+      const result=document.getElementById('battleResult');
+      if(result&&state.battleResult) result.innerHTML=state.battleResult;
+    }else{
+      document.getElementById('setup').classList.remove('hidden');
+    }
+    document.getElementById('saveStatus').textContent='Saved progress resumed';
+  }catch(error){
+    document.getElementById('saveStatus').textContent='Could not resume saved progress';
+  }finally{restoringGameProgress=false;}
+}
+function installAutoSave(){
+  ['startAuction','placeBid','sellPlayer','skipPlayer','goBack','finish','openLineup','selectLineupTeam','closeLineup',
+   'openBuild','selectBuildTeam','closeBuild','addToBuild','removeFromBuild','selectShopTeam','buyPlayer','redeemShopCode','openShop','closeShop','startBattle']
+    .forEach(name=>{
+      const original=window[name];
+      if(typeof original!=='function') return;
+      window[name]=function(...args){
+        const result=original.apply(this,args);
+        if(!restoringGameProgress) saveGameProgress(false);
+        return result;
+      };
+    });
+}
+installAutoSave();
+initializeSavedProgress();
+
 </script>
 </body>
 </html>
