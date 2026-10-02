@@ -10,6 +10,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <style>
+    .art-auction{background:radial-gradient(circle at 74% 18%,#d8a73d 0 2px,transparent 3px),linear-gradient(145deg,#176b45,#0b3024 70%);}
+    .auction-pitch{position:absolute;inset:22px 30%;border:1px solid #d4e7cb99;border-radius:5px;background:repeating-linear-gradient(0deg,transparent 0 23px,#ffffff12 24px 25px);}
+    .auction-pitch:before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid #e8f1df99;}
+    .pitch-circle{position:absolute;left:50%;top:50%;width:53px;height:53px;border:1px solid #e8f1df99;border-radius:50%;transform:translate(-50%,-50%);}
+    .pitch-ball{position:absolute;left:50%;top:50%;font-size:20px;transform:translate(-50%,-50%);}
+    .auction-stamp{position:absolute;right:13px;top:35px;padding:7px 9px;background:var(--lime);color:#182016;font:700 9px var(--mono);line-height:1.3;transform:rotate(7deg);}
+    .auction-label{position:absolute;bottom:14px;left:14px;color:#e6ebda;font:8px var(--mono);letter-spacing:.12em;}
+    .play-link{display:inline-flex;align-items:center;gap:11px;margin-top:12px;padding:8px 10px;border:1px solid #5f683f;color:var(--lime);font:9px var(--mono);letter-spacing:.1em;text-decoration:none;transition:.2s;}
+    .play-link:hover{background:var(--lime);color:#171914;border-color:var(--lime);}
+    .play-link span{font-size:13px;}
+  </style>
 </head>
 <body>
   <div class="page-shell">
@@ -48,7 +60,7 @@
       <section class="discover-section" id="discover">
         <div class="section-heading"><div><div class="eyebrow section-eyebrow">THE DROP <span class="tiny-square"></span> VOL. 08</div><h2>Find your <em>next</em> game.</h2></div><a href="#games" class="text-link">VIEW ALL GAMES <span>↗</span></a></div>
         <div class="filters" role="group" aria-label="Filter games by genre">
-          <button class="filter-chip selected" data-filter="all">All games <span>06</span></button><button class="filter-chip" data-filter="action">Action</button><button class="filter-chip" data-filter="adventure">Adventure</button><button class="filter-chip" data-filter="puzzle">Puzzle</button><button class="filter-chip" data-filter="cozy">Cozy</button>
+          <button class="filter-chip selected" data-filter="all">All games <span>07</span></button><button class="filter-chip" data-filter="action">Action</button><button class="filter-chip" data-filter="adventure">Adventure</button><button class="filter-chip" data-filter="puzzle">Puzzle</button><button class="filter-chip" data-filter="cozy">Cozy</button><button class="filter-chip" data-filter="sports">Sports</button>
           <label class="search-wrap"><span>⌕</span><input id="game-search" type="search" placeholder="Find a vibe..." aria-label="Search games"></label>
         </div>
         <div class="game-grid" id="games">
@@ -60,6 +72,7 @@
           <article class="game-card" data-genre="cozy adventure" data-title="Moss & Moon"><div class="game-art art-moss"><div class="moss-moon"></div><span class="art-number">04</span><span class="moss-stars">✦ · ✧ · ✦</span></div><div class="game-info"><div><span class="genre">COZY · 6–9 HRS</span><h3>Moss &amp; Moon</h3></div><button class="save-button" aria-label="Save Moss & Moon to library" aria-pressed="false">＋</button></div><p class="game-blurb">Tend a little garden at the edge of the universe.</p></article>
           <article class="game-card" data-genre="action adventure" data-title="Static Bloom"><div class="game-art art-static"><div class="static-slice"></div><span class="art-number">05</span><span class="static-type">SIGNAL<br>FOUND_</span></div><div class="game-info"><div><span class="genre">ACTION · 10–14 HRS</span><h3>Static Bloom</h3></div><button class="save-button" aria-label="Save Static Bloom to library" aria-pressed="false">＋</button></div><p class="game-blurb">Tune into the strange frequencies beneath the city.</p></article>
           <article class="game-card" data-genre="puzzle cozy" data-title="Pocket Circuit"><div class="game-art art-circuit"><div class="circuit-path"></div><span class="art-number">06</span><span class="circuit-word">TAKE<br>THE<br>SCENIC<br>ROUTE</span></div><div class="game-info"><div><span class="genre">PUZZLE · 2–4 HRS</span><h3>Pocket Circuit</h3></div><button class="save-button" aria-label="Save Pocket Circuit to library" aria-pressed="false">＋</button></div><p class="game-blurb">Tiny trains, tricky tracks, and a very big map.</p></article>
+          <article class="game-card" data-genre="sports strategy" data-title="Football Auction Night"><div class="game-art art-auction"><div class="auction-pitch"><span class="pitch-circle"></span><span class="pitch-ball">⚽</span></div><span class="art-number">07</span><span class="auction-stamp">BUILD<br>YOUR XI</span><span class="auction-label">DRAFT NIGHT / 01</span></div><div class="game-info"><div><span class="genre">SPORTS · STRATEGY</span><h3>Football Auction Night</h3></div><button class="save-button" aria-label="Save Football Auction Night to library" aria-pressed="false">＋</button></div><p class="game-blurb">Outbid your rivals, sign legends, and build a winning XI.</p><a class="play-link" href="football-auction-night.html">PLAY NOW <span>↗</span></a></article>
         </div>
         <p class="empty-state" id="empty-state" hidden>No games match that search. Try another genre or title.</p>
       </section>
