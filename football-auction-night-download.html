@@ -194,6 +194,8 @@
   .battle-score{font-size:clamp(2rem,8vw,3.2rem);font-weight:900;color:#ffda7b;letter-spacing:.04em;margin:4px 0;}
   .battle-result-title{font-weight:800;font-size:1.15rem;}
   .battle-result-meta{font-size:.85rem;color:#b8cbd3;margin-top:6px;}
+  .version-badge{display:inline-flex;align-items:center;gap:7px;margin-top:2px;padding:5px 9px;border:1px solid var(--line);border-radius:999px;color:#b9cbd4;background:rgba(255,255,255,.04);font:600 .68rem ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em;cursor:pointer;}
+  .version-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);}
   .redeem-row{margin-top:18px;padding:18px;border:1px solid rgba(244,189,80,.32);border-radius:14px;background:linear-gradient(140deg,rgba(244,189,80,.09),rgba(4,17,25,.38));}
   .redeem-row>label{font-size:1rem;margin-bottom:10px;color:#ffda7b;}
   .redeem-input-row{display:flex;gap:10px;}
@@ -210,7 +212,7 @@
     <div>
       <h1>Auction Night</h1>
       <p class="sub">Build your squad, one bid at a time.</p>
-      <span aria-label="Game version 1.1.0, build date October 2, 2026" style="display:inline-block;margin-top:2px;padding:5px 9px;border:1px solid var(--line);border-radius:999px;color:#b9cbd4;font:600 .68rem ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em;">VERSION 1.1.0 · BUILD 2026.10.02</span>
+      <button type="button" class="version-badge" aria-label="Game version 1.1.0. Click to open the redeem option." onclick="revealRedeemOption()">VERSION 1.1.0 · BUILD 2026.10.02</button>
     </div>
     <button class="btn-outline shop-link" onclick="openShop()">ℹ️ Player info</button>
   </div>
@@ -291,7 +293,7 @@
       <div class="card" id="shopSquadCard">
         <h3 style="margin:0 0 8px;">Coins: <span id="coinBalance">0</span></h3>
         <div id="shopSquadBody" style="font-size:0.9rem; opacity:0.85;">No players bought yet.</div>
-        <div class="redeem-row">
+        <div class="redeem-row hidden" id="redeemOption">
           <label for="redeemCode">Redeem code <span style="opacity:.65;font-weight:400;">(once per team)</span></label>
           <div class="redeem-input-row"><input id="redeemCode" type="text" autocomplete="off" placeholder="Enter code"><button class="btn-gold" onclick="redeemShopCode()">Redeem</button></div>
           <p class="redeem-message" id="redeemMessage" aria-live="polite"></p>
@@ -703,6 +705,13 @@ function redeemShopCode(){
   renderShopToggle();
   renderShopList();
   renderShopSquad();
+}
+
+function revealRedeemOption(){
+  openShop();
+  const option=document.getElementById('redeemOption');
+  option.classList.remove('hidden');
+  option.scrollIntoView({behavior:'smooth',block:'center'});
 }
 
 function selectShopTeam(n){
