@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 12546)
+Total output lines: 904
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,6 +126,21 @@
   .winner-banner .wtitle{font-size:0.8rem; text-transform:none; opacity:0.75; margin-bottom:2px; font-weight:700;}
   .winner-banner .wname{font-size:1.4rem;}
   .winner-banner .wstat{font-size:0.85rem; font-weight:600; margin-top:4px; opacity:0.85;}
+  .lineup-pitch{
+    min-height:620px; padding:22px 12px; border:2px solid rgba(255,255,255,.75); border-radius:14px;
+    background:linear-gradient(90deg,rgba(255,255,255,.08) 50%,transparent 50%),#176b45;
+    background-size:100% 100%; position:relative; display:flex; flex-direction:column;
+    justify-content:space-around; overflow:hidden;
+  }
+  .lineup-pitch:before{content:"";position:absolute;inset:50% 0 auto;border-top:2px solid rgba(255,255,255,.65);}
+  .lineup-pitch:after{content:"";position:absolute;width:110px;height:110px;border:2px solid rgba(255,255,255,.65);border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%);}
+  .lineup-row{display:flex;justify-content:space-evenly;align-items:center;gap:6px;position:relative;z-index:1;}
+  .lineup-player{width:min(22%,130px);min-height:62px;padding:8px 4px;border-radius:10px;text-align:center;color:#fff;background:rgba(9,35,24,.84);border:1px solid rgba(255,255,255,.7);font-size:.78rem;box-shadow:0 2px 8px #0004;}
+  .lineup-player b{display:block;color:#f1cb67;font-size:.72rem;margin-bottom:3px;}
+  .lineup-player span{display:block;overflow-wrap:anywhere;}
+  .lineup-team-toggle{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 14px;}
+  .lineup-team-toggle button{padding:9px 8px;}
+  @media(max-width:480px){.lineup-pitch{min-height:560px}.lineup-player{font-size:.68rem;padding:6px 2px}}
 </style>
 </head>
 <body>
@@ -150,6 +168,22 @@
     <button class="btn-gold" onclick="startAuction()">Start auction</button>
     <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openBuild()">🛠️ Build</button>
     <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openShop()">🛒 Player shop</button>
+    <button class="btn-gold" style="width:100%; margin-top:10px;" onclick="openLineup()">▶ Play</button>
+  </div>
+
+  <div id="lineup" class="hidden">
+    <div class="shop-header">
+      <div><h1>Starting XI</h1><p class="sub">4–3–3 formation</p></div>
+      <button class="btn-outline" onclick="closeLineup()">✕ Main menu</button>
+    </div>
+    <div class="lineup-team-toggle" role="group" aria-label="Select team for lineup">
+      <button id="lineupTeam1" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(1)">Team 1</button>
+      <button id="lineupTeam2" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(2)">Team 2</button>
+      <button id="lineupTeam3" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(3)">Team 3</button>
+      <button id="lineupTeam4" class="btn-outline" aria-pressed="false" onclick="selectLineupTeam(4)">Team 4</button>
+    </div>
+    <div class="lineup-pitch" id="lineupPitch" aria-label="Football team lineup in a 4-3-3 formation"></div>
+    <div class="actions-row"><button class="btn-outline" onclick="openBuild()">🛠️ Choose squad</button></div>
   </div>
 
   <!-- BUILD (free squad builder, no bidding) -->
@@ -352,56 +386,59 @@ const PLAYERS = [
   ["Lamine Yamal","Winger",22],["Pedri","Central Mid",18],["Gavi","Central Mid",15],
   ["Jamal Musiala","Attacking Mid",18],["Florian Wirtz","Attacking Mid",18],["Bukayo Saka","Winger",18],
   ["Phil Foden","Attacking Mid",18],["Declan Rice","Central Mid",16],["William Saliba","Centre Back",14],
-  ["Alejandro Garnacho","Winger",12],["Eduardo Camavinga","Central Mid",14],["Aurélien Tchouaméni","Defensive Mid",14],
-  ["Xavi Simons","Attacking Mid",13],["Nico Williams","Winger",15],["Ansu Fati","Winger",11],
-  ["João Félix","Attacking Mid",12],["Ferran Torres","Winger",11],["Dušan Vlahović","Striker",14],
-  ["Victor Osimhen","Striker",17],["Khvicha Kvaratskhelia","Winger",16],["Rafael Leão","Winger",15],
-  ["Federico Valverde","Central Mid",17],["Joško Gvardiol","Centre Back",15],["Alphonso Davies","Full Back",15],
-  ["Achraf Hakimi","Full Back",15],["Trent Alexander-Arnold","Full Back",15],["Endrick","Striker",13],
-  ["Kobbie Mainoo","Central Mid",12],["Warren Zaïre-Emery","Central Mid",12],["Jules Koundé","Centre Back",13],
-  ["Martin Ødegaard","Attacking Mid",16],["Bruno Guimarães","Central Mid",13],["Rodri","Defensive Mid",18],
-  ["Rodrygo","Winger",14],["Julián Álvarez","Striker",14],["Enzo Fernández","Central Mid",14],
-  ["Moisés Caicedo","Defensive Mid",13],["Jan Koller","Striker",13],
-  ["Marco Rinaldi","Striker",12],["Kofi Boateng","Striker",10],["Diego Serrano","Striker",9],
-  ["Lucas Ferreira","Winger",8],["Youssef Amrani","Winger",7],["Ivan Petrov","Winger",6],
-  ["Tomás Herrera","Attacking Mid",11],["Kenji Watanabe","Attacking Mid",8],
-  ["Nils Bergström","Central Mid",9],["Sami Al-Farsi","Central Mid",7],["Owen Fitzgerald","Central Mid",6],
-  ["Rafael Costa","Defensive Mid",7],["Milan Dvořák","Defensive Mid",6],
-  ["Bruno Alves","Centre Back",8],["Erik Johansson","Centre Back",7],["Kwame Asante","Centre Back",6],
-  ["Hugo Delacroix","Full Back",6],["Ravi Chandran","Full Back",5],["Aleksander Nowak","Full Back",5],
-  ["Diego Martins","Goalkeeper",9],["Felix Obi","Goalkeeper",6],
-  ["Santiago Reyes","Striker",7],["Mateo Rossi","Winger",5],["Jonas Lindqvist","Centre Back",5]
-];
-
-let teams = [];
-let queue = [];
-let idx = 0;
-let currentBid = 0;
-let leadingTeamIndex = -1;
-let bidStep = 1;
-let history = [];
-
-function shuffle(arr){
-  const a = arr.slice();
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i],a[j]] = [a[j],a[i]];
-  }
-  return a;
-}
-
-function backToMenu(){
-  teams = [];
-  queue = [];
-  idx = 0;
-  currentBid = 0;
-  leadingTeamIndex = -1;
+  ["Alejandro Garnacho","Winger",12],["Eduardo Camavinga…546 tokens truncated…ngTeamIndex = -1;
   history = [];
   document.getElementById('auction').classList.add('hidden');
   document.getElementById('results').classList.add('hidden');
   document.getElementById('setup').classList.remove('hidden');
   const banner = document.querySelector('.winner-banner');
   if(banner) banner.remove();
+}
+
+let lineupTeam = 1;
+function openLineup(){
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('lineup').classList.remove('hidden');
+  renderLineup();
+}
+function selectLineupTeam(teamNumber){
+  lineupTeam = teamNumber;
+  renderLineup();
+}
+function closeLineup(){
+  document.getElementById('lineup').classList.add('hidden');
+  document.getElementById('setup').classList.remove('hidden');
+}
+function renderLineup(){
+  [1,2,3,4].forEach(n=>{
+    const button = document.getElementById(`lineupTeam${n}`);
+    button.className = n===lineupTeam ? 'btn-gold' : 'btn-outline';
+    button.setAttribute('aria-pressed', n===lineupTeam ? 'true' : 'false');
+  });
+  const slots = [
+    {role:'LW', positions:['Winger','Forward','Striker']},
+    {role:'ST', positions:['Striker','Forward']},
+    {role:'RW', positions:['Winger','Forward','Striker']},
+    {role:'CM', positions:['Central Mid','Attacking Mid','Defensive Mid']},
+    {role:'CM', positions:['Central Mid','Attacking Mid','Defensive Mid']},
+    {role:'DM', positions:['Defensive Mid','Central Mid']},
+    {role:'LB', positions:['Full Back','Centre Back']},
+    {role:'CB', positions:['Centre Back']},
+    {role:'CB', positions:['Centre Back']},
+    {role:'RB', positions:['Full Back','Centre Back']},
+    {role:'GK', positions:['Goalkeeper']}
+  ];
+  const teamSquad = shopSquadByTeam[lineupTeam] || [];
+  const chosenSquad = teamSquad.length ? teamSquad : buildSquad;
+  const available = (chosenSquad.length ? chosenSquad : ELIGIBLE_PLAYERS.map(([name,pos,base])=>({name,pos,rating:ratingFor(name,base)}))).slice();
+  const used = new Set();
+  const rows = [slots.slice(0,3),slots.slice(3,6),slots.slice(6,10),slots.slice(10)];
+  document.getElementById('lineupPitch').innerHTML = rows.map(row=>`<div class="lineup-row">${row.map(slot=>{
+    let player = available.filter(p=>!used.has(p.name)&&slot.positions.includes(p.pos)).sort((a,b)=>b.rating-a.rating)[0];
+    if(!player) player = available.filter(p=>!used.has(p.name)).sort((a,b)=>b.rating-a.rating)[0];
+    if(player) used.add(player.name);
+    return `<div class="lineup-player"><b>${slot.role}</b><span>${player ? player.name : 'Open slot'}</span>${player ? `<span>OVR ${player.rating}</span>` : ''}</div>`;
+  }).join('')}</div>`).join('');
 }
 
 let buildSquad = [];
