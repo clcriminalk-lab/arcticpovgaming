@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Football Auction Night — Arctic POV Gaming</title>
+<title>Auction Night</title>
 <style>
   :root{
     --pitch:#0F3D2E; --pitch2:#0A2C21; --chalk:#F3F1E9; --gold:#D8A73D;
@@ -485,12 +485,14 @@ function backToMenu(){
 
 let lineupTeam = 1;
 function openLineup(){
+  lineupTeam = shopActiveTeam;
   document.getElementById('setup').classList.add('hidden');
   document.getElementById('lineup').classList.remove('hidden');
   renderLineup();
 }
 function selectLineupTeam(teamNumber){
   lineupTeam = teamNumber;
+  shopActiveTeam = teamNumber;
   renderLineup();
 }
 function closeLineup(){
@@ -516,9 +518,7 @@ function renderLineup(){
     {role:'RB', positions:['Full Back','Centre Back']},
     {role:'GK', positions:['Goalkeeper']}
   ];
-  const teamSquad = shopSquadByTeam[lineupTeam] || [];
-  const chosenSquad = teamSquad.length ? teamSquad : buildSquad;
-  const available = (chosenSquad.length ? chosenSquad : ELIGIBLE_PLAYERS.map(([name,pos,base])=>({name,pos,rating:ratingFor(name,base)}))).slice();
+  const available = (buildSquadsByTeam[lineupTeam] || []).slice();
   const used = new Set();
   const rows = [slots.slice(0,3),slots.slice(3,6),slots.slice(6,10),slots.slice(10)];
   document.getElementById('lineupPitch').innerHTML = rows.map(row=>`<div class="lineup-row">${row.map(slot=>{
@@ -529,9 +529,11 @@ function renderLineup(){
   }).join('')}</div>`).join('');
 }
 
-let buildSquad = [];
+let buildSquadsByTeam = {1:[], 2:[], 3:[], 4:[]};
+let buildTeam = 1;
 
 function openBuild(){
+  buildTeam = lineupTeam;
   document.getElementById('build').classList.remove('hidden');
   renderBuildList();
   renderBuildSquad();
@@ -540,21 +542,25 @@ function closeBuild(){
   document.getElementById('build').classList.add('hidden');
 }
 function addToBuild(name,pos,base){
-  if(buildSquad.length >= TEAM_SIZE_CAP) return;
+  const buildSquad = buildSquadsByTeam[buildTeam];
+  const owned = (shopSquadByTeam[buildTeam] || []).find(p=>p.name===name);
+  if(!owned || buildSquad.some(p=>p.name===name) || buildSquad.length >= TEAM_SIZE_CAP) return;
   const used = buildSquad.filter(p=>p.pos===pos).length;
   const limit = POSITION_LIMITS[pos];
   if(limit !== undefined && used >= limit) return;
-  buildSquad.push({name,pos,rating:ratingFor(name,base)});
+  buildSquad.push({name,pos,rating:owned.rating});
   renderBuildList();
   renderBuildSquad();
 }
 function removeFromBuild(name){
-  buildSquad = buildSquad.filter(p=>p.name!==name);
+  buildSquadsByTeam[buildTeam] = buildSquadsByTeam[buildTeam].filter(p=>p.name!==name);
   renderBuildList();
   renderBuildSquad();
 }
 function renderBuildSquad(){
-  document.getElementById('buildCount').textContent = `${buildSquad.length}/${TEAM_SIZE_CAP} players selected`;
+  const buildSquad = buildSquadsByTeam[buildTeam];
+  const ownedCount = (shopSquadByTeam[buildTeam] || []).length;
+  document.getElementById('buildCount').textContent = `Team ${buildTeam} · ${buildSquad.length}/${TEAM_SIZE_CAP} selected · ${ownedCount} bought`;
   const body = document.getElementById('buildSquadBody');
   if(!buildSquad.length){ body.innerHTML = 'No players yet.'; return; }
   const totalRating = buildSquad.reduce((s,p)=>s+p.rating,0);
@@ -565,8 +571,13 @@ function renderBuildSquad(){
     </div>`).join('');
 }
 function renderBuildList(){
-  const sorted = ELIGIBLE_PLAYERS.slice().sort((a,b)=> ratingFor(b[0],b[2]) - ratingFor(a[0],a[2]));
-  document.getElementById('buildListBody').innerHTML = sorted.map(([name,pos,base])=>{
+  const buildSquad = buildSquadsByTeam[buildTeam];
+  const sorted = (shopSquadByTeam[buildTeam] || []).slice().sort((a,b)=>b.rating-a.rating);
+  if(!sorted.length){
+    document.getElementById('buildListBody').innerHTML = '<tr><td colspan="4" style="opacity:.7; padding:18px 6px;">No players bought for this team yet. Buy players in the Player Shop first.</td></tr>';
+    return;
+  }
+  document.getElementById('buildListBody').innerHTML = sorted.map(({name,pos,rating})=>{
     const already = buildSquad.some(p=>p.name===name);
     const used = buildSquad.filter(p=>p.pos===pos).length;
     const limit = POSITION_LIMITS[pos];
@@ -574,8 +585,8 @@ function renderBuildList(){
     const squadFull = buildSquad.length >= TEAM_SIZE_CAP;
     const disabled = already || posFull || squadFull;
     const label = already ? 'Added' : (posFull ? 'Pos full' : (squadFull ? 'Squad full' : 'Add'));
-    return `<tr><td>${name}</td><td>${pos}</td><td>${ratingFor(name,base)}</td>
-      <td><button class="btn-gold" style="padding:5px 12px; font-size:0.78rem;" ${disabled?'disabled':''} onclick="addToBuild('${name.replace(/'/g,"\\'")}','${pos}',${base})">${label}</button></td></tr>`;
+    return `<tr><td>${name}</td><td>${pos}</td><td>${rating}</td>
+      <td><button class="btn-gold" style="padding:5px 12px; font-size:0.78rem;" ${disabled?'disabled':''} onclick="addToBuild('${name.replace(/'/g,"\\'")}','${pos}',0)">${label}</button></td></tr>`;
   }).join('');
 }
 
