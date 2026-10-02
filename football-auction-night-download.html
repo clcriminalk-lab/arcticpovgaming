@@ -740,16 +740,16 @@ function renderShopToggle(){
   }).join('');
 }
 
-function buyPlayer(name,pos,base){
+function buyPlayer(name,pos,price,ratingBase=price){
   const coins = shopCoinsByTeam[shopActiveTeam];
   const squad = shopSquadByTeam[shopActiveTeam];
-  if(coins < base) return;
+  if(coins < price) return;
   if(squad.length >= TEAM_SIZE_CAP) return;
   const used = squad.filter(p=>p.pos===pos).length;
   const limit = POSITION_LIMITS[pos];
   if(limit !== undefined && used >= limit) return;
-  shopCoinsByTeam[shopActiveTeam] -= base;
-  squad.push({name,pos,rating:ratingFor(name,base)});
+  shopCoinsByTeam[shopActiveTeam] -= price;
+  squad.push({name,pos,rating:ratingFor(name,ratingBase)});
   renderShopToggle();
   renderShopList();
   renderShopSquad();
@@ -777,11 +777,12 @@ function renderShopList(){
     const limit = POSITION_LIMITS[pos];
     const posFull = limit !== undefined && used >= limit;
     const squadFull = squad.length >= TEAM_SIZE_CAP;
-    const canAfford = coins >= base;
+    const shopPrice = base + 10;
+    const canAfford = coins >= shopPrice;
     const disabled = already || posFull || squadFull || !canAfford;
-    const label = already ? 'Owned' : (posFull ? 'Pos full' : (squadFull ? 'Squad full' : (!canAfford ? 'No coins' : `Buy · ${base}`)));
-    return `<tr><td>${name}</td><td>${pos}</td><td>${ratingFor(name,base)}</td><td>${base}</td><td>${tags.length?tags.join(', '):'—'}</td>
-      <td><button class="btn-gold" style="padding:5px 12px; font-size:0.78rem;" ${disabled?'disabled':''} onclick="buyPlayer('${name.replace(/'/g,"\\'")}','${pos}',${base})">${label}</button></td></tr>`;
+    const label = already ? 'Owned' : (posFull ? 'Pos full' : (squadFull ? 'Squad full' : (!canAfford ? 'No coins' : `Buy · ${shopPrice}`)));
+    return `<tr><td>${name}</td><td>${pos}</td><td>${ratingFor(name,base)}</td><td>${shopPrice}</td><td>${tags.length?tags.join(', '):'—'}</td>
+      <td><button class="btn-gold" style="padding:5px 12px; font-size:0.78rem;" ${disabled?'disabled':''} onclick="buyPlayer('${name.replace(/'/g,"\\'")}','${pos}',${shopPrice},${base})">${label}</button></td></tr>`;
   }).join('');
 }
 
