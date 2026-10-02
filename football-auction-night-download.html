@@ -218,6 +218,7 @@
     </div>
     <div class="topnav-actions">
       <button class="btn-outline" onclick="saveGameProgress(true)">💾 Save progress</button>
+      <button class="btn-outline" onclick="resetGameProgress()">↺ Reset</button>
       <button class="btn-outline shop-link" onclick="openShop()">ℹ️ Player info</button>
       <span id="saveStatus" class="save-status" aria-live="polite">Progress auto-saves on this device</span>
     </div>
@@ -238,7 +239,6 @@
     <button class="btn-gold" onclick="startAuction()">Start auction</button>
     <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openBuild()">🛠️ Build</button>
     <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openShop()">🛒 Player shop</button>
-    <button id="resumeGameBtn" class="btn-outline hidden" style="width:100%; margin-top:10px;" onclick="resumeGameProgress()">↻ Resume saved game</button>
     <button class="btn-gold" style="width:100%; margin-top:10px;" onclick="openLineup()">▶ Play</button>
   </div>
 
@@ -1106,8 +1106,6 @@ function saveGameProgress(manual=false){
     localStorage.setItem(GAME_SAVE_KEY,JSON.stringify(state));
     const status=document.getElementById('saveStatus');
     if(status) status.textContent=manual?'Progress saved on this device':'Progress auto-saved';
-    const resume=document.getElementById('resumeGameBtn');
-    if(resume) resume.classList.remove('hidden');
     return true;
   }catch(error){
     const status=document.getElementById('saveStatus');
@@ -1117,11 +1115,14 @@ function saveGameProgress(manual=false){
 }
 function initializeSavedProgress(){
   try{
-    if(localStorage.getItem(GAME_SAVE_KEY)){
-      document.getElementById('resumeGameBtn').classList.remove('hidden');
-      document.getElementById('saveStatus').textContent='Saved progress available';
-    }
-  }catch(error){}
+    if(localStorage.getItem(GAME_SAVE_KEY)) resumeGameProgress();
+    else document.getElementById('saveStatus').textContent='Progress auto-saves on this device';
+  }catch(error){document.getElementById('saveStatus').textContent='Autosave unavailable in this browser';}
+}
+function resetGameProgress(){
+  if(!confirm('Reset the saved game and start fresh?')) return;
+  try{localStorage.removeItem(GAME_SAVE_KEY);location.reload();}
+  catch(error){document.getElementById('saveStatus').textContent='Could not reset saved progress';}
 }
 function resumeGameProgress(){
   let state;
