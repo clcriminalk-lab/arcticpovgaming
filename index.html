@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101014">
+  <meta name="description" content="Queue up. Discover your next favorite game on SideQuest." />
+  <title>SideQuest — Find your next game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="#home" aria-label="SideQuest home"><span class="brand-mark">S<span>Q</span></span><span>SIDEQUEST</span></a>
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="active" href="#discover">Discover</a><a href="#library">My library <span class="nav-count">03</span></a><a href="#community">Community</a>
+      </nav>
+      <div class="profile"><span class="status-dot"></span><span class="profile-name">PLAYER ONE</span><span class="avatar">P1</span></div>
+      <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+    </header>
+
+    <main id="home">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="live-dot"></span> YOUR NEXT OBSESSION STARTS HERE</div>
+          <h1 id="hero-title">Less scrolling.<br><span>More playing.</span></h1>
+          <p>Hand-picked worlds, hidden gems, and weekend-ready adventures. Your next great game is one click away.</p>
+          <a class="button button-primary" href="#discover">Explore the games <span>↗</span></a>
+          <div class="hero-note"><span class="note-line"></span> UPDATED WEEKLY <span class="note-line"></span></div>
+        </div>
+        <div class="hero-art" role="img" aria-label="Abstract neon arcade portal artwork">
+          <div class="art-grid"></div><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+          <div class="portal"><div class="portal-core">SQ</div></div>
+          <div class="art-label label-top">NO. 01 <span>—</span> NEW WORLDS</div>
+          <div class="art-label label-bottom"><span class="pulse"></span> PORTAL OPEN <b>↗</b></div>
+          <div class="art-cross cross-one">+</div><div class="art-cross cross-two">+</div>
+        </div>
+        <div class="hero-index"><span>01</span> / 04</div>
+      </section>
+
+      <section class="feature-strip" aria-label="SideQuest features">
+        <div><span class="strip-icon">✳</span><span>CURATED, NOT CROWDED</span></div><div><span class="strip-icon">⌁</span><span>BUILT FOR YOUR BACKLOG</span></div><div><span class="strip-icon">◈</span><span>ALWAYS SOMETHING NEW</span></div>
+      </section>
+
+      <section class="discover-section" id="discover">
+        <div class="section-heading"><div><div class="eyebrow section-eyebrow">THE DROP <span class="tiny-square"></span> VOL. 08</div><h2>Find your <em>next</em> game.</h2></div><a href="#games" class="text-link">VIEW ALL GAMES <span>↗</span></a></div>
+        <div class="filters" role="group" aria-label="Filter games by genre">
+          <button class="filter-chip selected" data-filter="all">All games <span>06</span></button><button class="filter-chip" data-filter="action">Action</button><button class="filter-chip" data-filter="adventure">Adventure</button><button class="filter-chip" data-filter="puzzle">Puzzle</button><button class="filter-chip" data-filter="cozy">Cozy</button>
+          <label class="search-wrap"><span>⌕</span><input id="game-search" type="search" placeholder="Find a vibe..." aria-label="Search games"></label>
+        </div>
+        <div class="game-grid" id="games">
+          <article class="game-card game-featured" data-genre="adventure action" data-title="Afterlight">
+            <div class="game-art art-afterlight"><div class="art-sun"></div><div class="art-mountain"></div><span class="art-tag">SIDEQUEST PICK</span><span class="art-number">01</span></div><div class="game-info"><div><span class="genre">ADVENTURE · 8–12 HRS</span><h3>Afterlight</h3></div><button class="save-button" aria-label="Save Afterlight to library" aria-pressed="false">＋</button></div><p class="game-blurb">Chase the last sunset across a world that forgot the dawn.</p>
+          </article>
+          <article class="game-card" data-genre="action" data-title="Neon Drift"><div class="game-art art-drift"><div class="drift-ring"></div><span class="art-number">02</span><span class="vertical-word">FULL THROTTLE</span></div><div class="game-info"><div><span class="genre">ACTION · 4–6 HRS</span><h3>Neon Drift</h3></div><button class="save-button" aria-label="Save Neon Drift to library" aria-pressed="false">＋</button></div><p class="game-blurb">One bike. One city. Zero brakes.</p></article>
+          <article class="game-card" data-genre="puzzle adventure" data-title="Little Elsewhere"><div class="game-art art-elsewhere"><div class="elsewhere-shape"></div><span class="art-number">03</span><span class="art-caption">A PLACE<br>BETWEEN</span></div><div class="game-info"><div><span class="genre">PUZZLE · 3–5 HRS</span><h3>Little Elsewhere</h3></div><button class="save-button" aria-label="Save Little Elsewhere to library" aria-pressed="false">＋</button></div><p class="game-blurb">A pocket-sized mystery with room to get lost.</p></article>
+          <article class="game-card" data-genre="cozy adventure" data-title="Moss & Moon"><div class="game-art art-moss"><div class="moss-moon"></div><span class="art-number">04</span><span class="moss-stars">✦ · ✧ · ✦</span></div><div class="game-info"><div><span class="genre">COZY · 6–9 HRS</span><h3>Moss &amp; Moon</h3></div><button class="save-button" aria-label="Save Moss & Moon to library" aria-pressed="false">＋</button></div><p class="game-blurb">Tend a little garden at the edge of the universe.</p></article>
+          <article class="game-card" data-genre="action adventure" data-title="Static Bloom"><div class="game-art art-static"><div class="static-slice"></div><span class="art-number">05</span><span class="static-type">SIGNAL<br>FOUND_</span></div><div class="game-info"><div><span class="genre">ACTION · 10–14 HRS</span><h3>Static Bloom</h3></div><button class="save-button" aria-label="Save Static Bloom to library" aria-pressed="false">＋</button></div><p class="game-blurb">Tune into the strange frequencies beneath the city.</p></article>
+          <article class="game-card" data-genre="puzzle cozy" data-title="Pocket Circuit"><div class="game-art art-circuit"><div class="circuit-path"></div><span class="art-number">06</span><span class="circuit-word">TAKE<br>THE<br>SCENIC<br>ROUTE</span></div><div class="game-info"><div><span class="genre">PUZZLE · 2–4 HRS</span><h3>Pocket Circuit</h3></div><button class="save-button" aria-label="Save Pocket Circuit to library" aria-pressed="false">＋</button></div><p class="game-blurb">Tiny trains, tricky tracks, and a very big map.</p></article>
+        </div>
+        <p class="empty-state" id="empty-state" hidden>No games match that search. Try another genre or title.</p>
+      </section>
+
+      <section class="bottom-banner" id="community"><div class="banner-orbit"></div><div><div class="eyebrow">GOOD GAMES TRAVEL</div><h2>Your friends have <span>great taste.</span></h2><p>Swap recommendations. Start a co-op night. Find your player two.</p></div><a class="button button-outline" href="mailto:hello@sidequest.games?subject=SideQuest%20community">Join the community <span>↗</span></a></section>
+    </main>
+    <footer class="footer"><a class="brand footer-brand" href="#home"><span class="brand-mark">S<span>Q</span></span><span>SIDEQUEST</span></a><span>GOOD GAMES. GOOD COMPANY. © 2026</span><a href="#home">BACK TO TOP ↑</a></footer>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
+
