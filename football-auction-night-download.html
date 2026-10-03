@@ -41,6 +41,8 @@
   }
   .row{display:flex; gap:12px; flex-wrap:wrap;}
   .row > div{flex:1; min-width:140px;}
+  .team-count-toggle{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:14px;}
+  .team-count-toggle button{padding:10px 8px;}
   button{
     font:inherit; cursor:pointer; border:none; border-radius:8px; padding:12px 16px;
     font-weight:700; font-size:0.95rem; transition:transform .08s ease, opacity .15s ease;
@@ -247,8 +249,9 @@
   <div id="setup" class="card">
     <div class="row">
       <div>
-        <label for="numTeams">Number of teams</label>
-        <input type="number" id="numTeams" min="2" max="6" value="4">
+        <label id="teamCountLabel">Number of teams</label>
+        <div id="teamCountToggle" class="team-count-toggle" role="group" aria-labelledby="teamCountLabel"></div>
+        <input type="hidden" id="numTeams" min="1" max="4" value="4">
       </div>
       <div>
         <label for="budget">Budget per team (credits)</label>
@@ -563,9 +566,21 @@ const buildSquadsByTeam = {1:[],2:[],3:[],4:[],5:[],6:[]};
 let buildActiveTeam = 1;
 let buildSquad = buildSquadsByTeam[buildActiveTeam];
 let lineupTeam = 1;
+function renderTeamCountToggle(){
+  const input=document.getElementById('numTeams');
+  const count=Math.max(1,Math.min(4,parseInt(input.value,10)||4));
+  input.value=count;
+  document.getElementById('teamCountToggle').innerHTML=[1,2,3,4].map(n=>
+    `<button type="button" class="${n===count?'btn-gold':'btn-outline'}" aria-pressed="${n===count}" onclick="selectTeamCount(${n})">${n}</button>`
+  ).join('');
+}
+function selectTeamCount(count){
+  document.getElementById('numTeams').value=Math.max(1,Math.min(4,parseInt(count,10)||1));
+  renderTeamCountToggle();
+}
 function configuredTeamCount(){
   const configured = parseInt(document.getElementById('numTeams').value,10) || 4;
-  return Math.max(2,Math.min(6,teams.length || configured));
+  return Math.max(2,Math.min(4,teams.length || configured));
 }
 function openLineup(){
   document.getElementById('setup').classList.add('hidden');
@@ -944,7 +959,7 @@ function closeShop(){
 }
 
 function startAuction(){
-  const n = Math.max(2, Math.min(6, parseInt(document.getElementById('numTeams').value)||4));
+  const n = Math.max(1, Math.min(4, parseInt(document.getElementById('numTeams').value)||4));
   const budget = Math.max(10, parseInt(document.getElementById('budget').value)||100);
   teams = Array.from({length:n}, (_,i)=>({name:`Team ${String.fromCharCode(65+i)}`, budget, squad:[]}));
   queue = shuffle(ELIGIBLE_PLAYERS).slice(0, 50);
@@ -1308,6 +1323,7 @@ function resumeGameProgress(){
     buildActiveTeam=state.buildActiveTeam||1;
     buildSquad=buildSquadsByTeam[buildActiveTeam]||[];
     document.getElementById('numTeams').value=state.numTeams||teams.length||4;
+    renderTeamCountToggle();
     document.getElementById('budget').value=state.budget||100;
     ['auction','results','lineup','build','shop','spinOverlay'].forEach(id=>document.getElementById(id).classList.add('hidden'));
     document.getElementById('setup').classList.add('hidden');
@@ -1335,7 +1351,7 @@ function resumeGameProgress(){
   }finally{restoringGameProgress=false;}
 }
 function installAutoSave(){
-  ['startAuction','placeBid','sellPlayer','skipPlayer','goBack','finish','openLineup','selectLineupTeam','closeLineup',
+  ['selectTeamCount','startAuction','placeBid','sellPlayer','skipPlayer','goBack','finish','openLineup','selectLineupTeam','closeLineup',
    'openBuild','selectBuildTeam','closeBuild','addToBuild','removeFromBuild','selectShopTeam','buyPlayer','redeemShopCode','openShop','closeShop','startBattle','openSpin','closeSpin','selectSpinTeam','spinPrize']
     .forEach(name=>{
       const original=window[name];
@@ -1348,6 +1364,7 @@ function installAutoSave(){
     });
 }
 installAutoSave();
+renderTeamCountToggle();
 initializeSavedProgress();
 
 </script>
