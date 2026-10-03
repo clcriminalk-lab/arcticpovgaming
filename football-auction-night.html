@@ -197,12 +197,15 @@
   .battle-result-title{font-weight:800;font-size:1.15rem;}
   .battle-result-meta{font-size:.85rem;color:#b8cbd3;margin-top:6px;}
   .spin-wheel-wrap{position:relative;width:min(72vw,300px);aspect-ratio:1;margin:12px auto 18px;}
-  .spin-wheel{position:absolute;inset:0;border:8px solid #f4bd50;border-radius:50%;background:conic-gradient(from -30deg,#f4bd50 0deg 60deg,#17394a 60deg 120deg,#54b88a 120deg 180deg,#a94145 180deg 240deg,#4b6fbe 240deg 300deg,#a36ec2 300deg 360deg);box-shadow:0 12px 32px #0008,inset 0 0 0 4px rgba(255,255,255,.2);transition:transform 4.2s cubic-bezier(.12,.75,.16,1);}
+    .spin-wheel{position:absolute;inset:0;border:8px solid #f4bd50;border-radius:50%;background:conic-gradient(from -90deg,#54b88a 0deg 180deg,#4b6fbe 180deg 270deg,#a36ec2 270deg 324deg,#f4bd50 324deg 352.8deg,#e55e55 352.8deg 360deg);box-shadow:0 12px 32px #0008,inset 0 0 0 4px rgba(255,255,255,.2);transition:transform 4.2s cubic-bezier(.12,.75,.16,1);}
   .spin-wheel:after{content:"⚽";position:absolute;left:50%;top:50%;width:54px;height:54px;display:grid;place-items:center;border-radius:50%;background:#07131d;border:3px solid #ffda7b;transform:translate(-50%,-50%);font-size:1.5rem;}
-  .spin-wheel-label{position:absolute;left:50%;top:50%;z-index:1;color:#fff;font-weight:900;font-size:.92rem;text-shadow:0 2px 5px #000;transform:translate(-50%,-50%) rotate(var(--angle)) translateY(-102px) rotate(var(--counter-angle));}
+    .spin-wheel-label{position:absolute;left:50%;top:50%;z-index:1;color:#fff;font-weight:900;font-size:.85rem;text-shadow:0 2px 5px #000;transform:translate(-50%,-50%) rotate(var(--angle)) translateY(-102px) rotate(var(--counter-angle));}
   .spin-pointer{position:absolute;z-index:2;top:-7px;left:50%;transform:translateX(-50%);color:#fff;font-size:2rem;line-height:1;text-shadow:0 2px 6px #000;}
   .spin-result{text-align:center;min-height:1.5em;color:#ffda7b;font-weight:800;margin:12px 0;}
   .spin-team-toggle{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;}
+  .spin-odds{text-align:center;color:#b8cbd3;font-size:.78rem;line-height:1.6;margin:6px 0 14px;}
+  .spin-player-reward{text-align:center;padding:14px;margin:12px 0;border:1px solid var(--line);border-radius:14px;background:linear-gradient(135deg,rgba(244,189,80,.12),rgba(4,17,25,.5));font-weight:800;}
+  .spin-player-reward strong{display:block;color:#ffda7b;letter-spacing:.12em;font-size:.8rem;margin-bottom:4px;}
   .spin-team-toggle button{padding:9px 6px;}
   @media(max-width:420px){.spin-wheel-label{transform:translate(-50%,-50%) rotate(var(--angle)) translateY(-34vw) rotate(var(--counter-angle));}}
   .goal-animation{position:relative;overflow:hidden;min-height:86px;margin:0 0 12px;border:1px solid rgba(255,218,123,.3);border-radius:12px;background:radial-gradient(ellipse at 50% 100%,rgba(31,145,91,.52),rgba(4,18,25,.78) 72%);}
@@ -343,15 +346,16 @@
         <div class="spin-wheel-wrap" aria-label="Prize wheel">
           <div class="spin-pointer">▼</div>
           <div id="spinWheel" class="spin-wheel"></div>
-          <span class="spin-wheel-label" style="--angle:0deg;--counter-angle:0deg">50</span>
-          <span class="spin-wheel-label" style="--angle:60deg;--counter-angle:-60deg">100</span>
-          <span class="spin-wheel-label" style="--angle:120deg;--counter-angle:-120deg">250</span>
-          <span class="spin-wheel-label" style="--angle:180deg;--counter-angle:-180deg">500</span>
-          <span class="spin-wheel-label" style="--angle:240deg;--counter-angle:-240deg">1K</span>
-          <span class="spin-wheel-label" style="--angle:300deg;--counter-angle:-300deg">0</span>
+          <span class="spin-wheel-label" style="--angle:0deg;--counter-angle:0deg">C</span>
+          <span class="spin-wheel-label" style="--angle:135deg;--counter-angle:-135deg">R</span>
+          <span class="spin-wheel-label" style="--angle:207deg;--counter-angle:-207deg">E</span>
+          <span class="spin-wheel-label" style="--angle:248.4deg;--counter-angle:-248.4deg">L</span>
+          <span class="spin-wheel-label" style="--angle:266.4deg;--counter-angle:-266.4deg">M</span>
         </div>
-        <p id="spinResult" class="spin-result" aria-live="polite">Pick a team and spin to win coins.</p>
-        <button id="spinButton" class="btn-gold" style="width:100%;" onclick="spinPrize()">🎡 Spin for coins</button>
+        <p class="spin-odds">Common 50% · Rare 25% · Epic 15% · Legendary 8% · Mythic 2%</p>
+        <p id="spinResult" class="spin-result" aria-live="polite">Pick a team and spin for a player.</p>
+        <div id="spinPlayerReward" class="spin-player-reward hidden" aria-live="polite"></div>
+        <button id="spinButton" class="btn-gold" style="width:100%;" onclick="spinPrize()">🎡 Spin contract</button>
       </div>
     </div>
   </div>
@@ -737,6 +741,7 @@ let shopActiveTeam = 1;
 
 const spinUsedByTeam = {1:false, 2:false, 3:false, 4:false};
 const spinResultByTeam = {1:'', 2:'', 3:'', 4:''};
+const spinPlayerByTeam = {1:null, 2:null, 3:null, 4:null};
 let spinActiveTeam = 1;
 let spinInProgress = false;
 let spinRotation = 0;
@@ -762,24 +767,56 @@ function renderSpin(){
     return `<button class="${n===spinActiveTeam?'btn-gold':'btn-outline'}" aria-pressed="${n===spinActiveTeam}" onclick="selectSpinTeam(${n})">${label}</button>`;
   }).join('');
   const used=spinUsedByTeam[spinActiveTeam];
-  document.getElementById('spinButton').disabled=used||spinInProgress;
-  document.getElementById('spinButton').textContent=used?'Spin used':'🎡 Spin for coins';
-  document.getElementById('spinResult').textContent=spinInProgress?'The wheel is spinning…':(spinResultByTeam[spinActiveTeam]|| (used?'This team has already used its spin.':'Pick a team and spin to win coins.'));
+  const ownedNames=new Set(Object.values(shopSquadByTeam).flat().map(p=>p.name));
+  const hasAvailable=ELIGIBLE_PLAYERS.some(([name])=>!ownedNames.has(name));
+  document.getElementById('spinButton').disabled=used||spinInProgress||!hasAvailable;
+  document.getElementById('spinButton').textContent=used?'Spin used':(hasAvailable?'🎡 Spin contract':'No players left');
+  document.getElementById('spinResult').textContent=spinInProgress?'Opening your player contract…':(spinResultByTeam[spinActiveTeam]|| (used?'This team has already used its spin.':(hasAvailable?'Pick a team and spin for a player.':'All eligible players are already owned.')));
+  const reward=spinPlayerByTeam[spinActiveTeam], rewardBox=document.getElementById('spinPlayerReward');
+  if(reward){
+    rewardBox.classList.remove('hidden');
+    rewardBox.innerHTML=`<strong>${reward.rarity.toUpperCase()} CONTRACT</strong><span>${reward.name}</span><span style="font-size:.85rem;font-weight:600;opacity:.8;">${reward.pos} · OVR ${reward.rating}</span>`;
+  }else{
+    rewardBox.classList.add('hidden');
+    rewardBox.textContent='';
+  }
 }
 function spinPrize(){
   if(spinUsedByTeam[spinActiveTeam]||spinInProgress) return;
-  const prizes=[50,100,250,500,1000,0];
-  const prizeIndex=Math.floor(Math.random()*prizes.length);
-  const prize=prizes[prizeIndex];
+  const rarityOdds=[['Common',50],['Rare',25],['Epic',15],['Legendary',8],['Mythic',2]];
+  const ownedNames=new Set(Object.values(shopSquadByTeam).flat().map(p=>p.name));
+  const pools=Object.fromEntries(rarityOdds.map(([rarity])=>[rarity,ELIGIBLE_PLAYERS.filter(([name,pos,base])=>!ownedNames.has(name)&&playerRarityFor(name,base)===rarity)]));
+  const available=rarityOdds.filter(([rarity])=>pools[rarity].length);
+  if(!available.length){renderSpin();return;}
+  const totalOdds=available.reduce((sum,[,odds])=>sum+odds,0);
+  let roll=Math.random()*totalOdds;
+  let rarity=available[available.length-1][0];
+  for(const [tier,odds] of available){roll-=odds;if(roll<0){rarity=tier;break;}}
+  const pool=pools[rarity], picked=pool[Math.floor(Math.random()*pool.length)];
+  const [name,pos,base]=picked;
+  const player={name,pos,rating:ratingFor(name,base),rarity,source:'spin'};
+  spinPlayerByTeam[spinActiveTeam]=player;
+  shopSquadByTeam[spinActiveTeam].push(player);
   spinUsedByTeam[spinActiveTeam]=true;
-  spinResultByTeam[spinActiveTeam]=prize?`Team ${spinActiveTeam} won ${prize.toLocaleString()} coins!`:`Team ${spinActiveTeam} landed on 0 coins. Better luck next time!`;
-  shopCoinsByTeam[spinActiveTeam]+=prize;
+  spinResultByTeam[spinActiveTeam]=`Team ${spinActiveTeam} signed ${rarity} player ${name}!`;
   spinInProgress=true;
-  spinRotation+=360*6+((360-prizeIndex*60)%360);
+  const rarityAngles={Common:0,Rare:135,Epic:207,Legendary:248.4,Mythic:266.4};
+  spinRotation+=360*6+((360-rarityAngles[rarity])%360);
   document.getElementById('spinWheel').style.transform=`rotate(${spinRotation}deg)`;
   renderSpin();
+  renderShopToggle();
+  renderShopList();
+  renderShopSquad();
   saveGameProgress(false);
   window.setTimeout(()=>{spinInProgress=false;renderSpin();saveGameProgress(false);},4300);
+}
+function playerRarityFor(name,base){
+  const rating=PRIME_RATINGS[name]??Math.round(63+base*1.45);
+  if(rating>=100) return 'Mythic';
+  if(rating>=90) return 'Legendary';
+  if(rating>=85) return 'Epic';
+  if(rating>=80) return 'Rare';
+  return 'Common';
 }
 
 function redeemShopCode(){
@@ -1193,7 +1230,7 @@ function currentGameView(){
 function saveGameProgress(manual=false){
   try{
     const state={version:1,view:currentGameView(),teams,queue,idx,currentBid,leadingTeamIndex,bidStep,history,
-      shopCoinsByTeam,shopSquadByTeam,redeemedByTeam,buildSquadsByTeam,spinUsedByTeam,spinResultByTeam,
+      shopCoinsByTeam,shopSquadByTeam,redeemedByTeam,buildSquadsByTeam,spinUsedByTeam,spinResultByTeam,spinPlayerByTeam,
       shopActiveTeam,lineupTeam,spinActiveTeam,buildActiveTeam,
       numTeams:document.getElementById('numTeams').value,budget:document.getElementById('budget').value,
       battleResult:document.getElementById('battleResult')?.innerHTML||''};
@@ -1234,6 +1271,7 @@ function resumeGameProgress(){
       if(state.buildSquadsByTeam?.[key]) buildSquadsByTeam[key]=state.buildSquadsByTeam[key];
       if(state.spinUsedByTeam?.[key]!==undefined) spinUsedByTeam[key]=state.spinUsedByTeam[key];
       if(state.spinResultByTeam?.[key]) spinResultByTeam[key]=state.spinResultByTeam[key];
+      if(state.spinPlayerByTeam?.[key]) spinPlayerByTeam[key]=state.spinPlayerByTeam[key];
     }
     shopActiveTeam=state.shopActiveTeam||1; lineupTeam=state.lineupTeam||1;
     spinActiveTeam=state.spinActiveTeam||shopActiveTeam;
