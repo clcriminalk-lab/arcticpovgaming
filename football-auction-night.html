@@ -618,8 +618,7 @@ function renderLineup(){
   const used = new Set();
   const rows = [slots.slice(0,3),slots.slice(3,6),slots.slice(6,10),slots.slice(10)];
   document.getElementById('lineupPitch').innerHTML = rows.map(row=>`<div class="lineup-row">${row.map(slot=>{
-    let player = available.filter(p=>!used.has(p.name)&&slot.positions.includes(p.pos)).sort((a,b)=>b.rating-a.rating)[0];
-    if(!player) player = available.filter(p=>!used.has(p.name)).sort((a,b)=>b.rating-a.rating)[0];
+    const player = available.filter(p=>!used.has(p.name)&&slot.positions.includes(p.pos)).sort((a,b)=>b.rating-a.rating)[0];
     if(player) used.add(player.name);
     return `<div class="lineup-player"><b>${slot.role}</b><span>${player ? player.name : 'Open slot'}</span>${player ? `<span>OVR ${player.rating}</span>` : ''}</div>`;
   }).join('')}</div>`).join('');
