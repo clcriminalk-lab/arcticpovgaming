@@ -734,19 +734,23 @@ const redeemedByTeam = {1:false,2:false,3:false,4:false,5:false,6:false};
 let shopActiveTeam = 1;
 
 const spinUsedByTeam = {1:false, 2:false, 3:false, 4:false};
+const spinNextAtByTeam = {1:0, 2:0, 3:0, 4:0};
 const spinResultByTeam = {1:'', 2:'', 3:'', 4:''};
 const spinPlayerByTeam = {1:null, 2:null, 3:null, 4:null};
 const SPIN_RARITY_ODDS=[['Common',50],['Rare',25],['Epic',15],['Legendary',8],['Mythic',2]];
 let spinActiveTeam = 1;
 let spinInProgress = false;
+let spinCountdownTimer = null;
 
 function openSpin(){
   spinActiveTeam=shopActiveTeam;
   document.getElementById('setup').classList.add('hidden');
   document.getElementById('spinOverlay').classList.remove('hidden');
   renderSpin();
+  startSpinCountdown();
 }
 function closeSpin(){
+  if(spinCountdownTimer){clearInterval(spinCountdownTimer);spinCountdownTimer=null;}
   document.getElementById('spinOverlay').classList.add('hidden');
   document.getElementById('setup').classList.remove('hidden');
 }
@@ -754,6 +758,16 @@ function selectSpinTeam(team){
   if(spinInProgress||team<1||team>4) return;
   spinActiveTeam=team;
   renderSpin();
+}
+function spinCooldownRemaining(team){return Math.max(0,(Number(spinNextAtByTeam[team])||0)-Date.now());}
+function formatSpinCooldown(ms){const seconds=Math.ceil(ms/1000);return `${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}`;}
+function startSpinCountdown(){
+  if(spinCountdownTimer) clearInterval(spinCountdownTimer);
+  spinCountdownTimer=window.setInterval(()=>{
+    if(document.getElementById('spinOverlay').classList.contains('hidden')) return;
+    renderSpin();
+    if(!spinCooldownRemaining(spinActiveTeam)&&!spinInProgress){clearInterval(spinCountdownTimer);spinCountdownTimer=null;}
+  },1000);
 }
 function availableSpinPools(){
   const ownedNames=new Set(Object.values(shopSquadByTeam).flat().map(p=>p.name));
@@ -764,15 +778,16 @@ function renderSpin(){
     const label=teams[n-1]?.name||`Team ${n}`;
     return `<button class="${n===spinActiveTeam?'btn-gold':'btn-outline'}" aria-pressed="${n===spinActiveTeam}" onclick="selectSpinTeam(${n})">${label}</button>`;
   }).join('');
-  const used=spinUsedByTeam[spinActiveTeam];
+  const cooldown=spinCooldownRemaining(spinActiveTeam);
+  const used=cooldown>0;
   const pools=availableSpinPools();
   const available=SPIN_RARITY_ODDS.filter(([rarity])=>pools[rarity].length);
   const hasAvailable=available.length>0;
   const totalOdds=available.reduce((sum,[,odds])=>sum+odds,0);
   document.getElementById('spinOdds').textContent=hasAvailable?'Drop rates · '+available.map(([rarity,odds])=>`${rarity} ${Math.round(odds/totalOdds*100)}%`).join(' · '):'No player contracts remain';
   document.getElementById('spinButton').disabled=used||spinInProgress||!hasAvailable;
-  document.getElementById('spinButton').textContent=used?'Spin used':(hasAvailable?'🎡 Spin contract':'No players left');
-  document.getElementById('spinResult').textContent=spinInProgress?'A player is walking out…':(spinResultByTeam[spinActiveTeam]|| (used?'This team has already used its spin.':(hasAvailable?'Pick a team and spin for a player.':'All eligible players are already owned.')));
+  document.getElementById('spinButton').textContent=used?`Spin in ${formatSpinCooldown(cooldown)}`:(hasAvailable?'🎡 Spin contract':'No players left');
+  document.getElementById('spinResult').textContent=spinInProgress?'A player is walking out…':(used?`Next spin available in ${formatSpinCooldown(cooldown)}.`:(spinResultByTeam[spinActiveTeam]|| (hasAvailable?'Pick a team and sign a player.':'All eligible players are already owned.')));
   const reward=spinPlayerByTeam[spinActiveTeam], rewardBox=document.getElementById('spinPlayerReward');
   if(reward&&!spinInProgress){
     rewardBox.classList.remove('hidden');
@@ -783,7 +798,7 @@ function renderSpin(){
   }
 }
 function spinPrize(){
-  if(spinUsedByTeam[spinActiveTeam]||spinInProgress) return;
+  if(spinCooldownRemaining(spinActiveTeam)>0||spinInProgress) return;
   const pools=availableSpinPools();
   const available=SPIN_RARITY_ODDS.filter(([rarity])=>pools[rarity].length);
   if(!available.length){renderSpin();return;}
@@ -797,6 +812,7 @@ function spinPrize(){
   spinPlayerByTeam[spinActiveTeam]=player;
   shopSquadByTeam[spinActiveTeam].push(player);
   spinUsedByTeam[spinActiveTeam]=true;
+  spinNextAtByTeam[spinActiveTeam]=Date.now()+10*60*1000;
   spinResultByTeam[spinActiveTeam]=`Team ${spinActiveTeam} signed ${rarity} player ${name}!`;
   spinInProgress=true;
   const walkScene=document.getElementById('spinWalkScene');
@@ -1231,7 +1247,7 @@ function currentGameView(){
 function saveGameProgress(manual=false){
   try{
     const state={version:1,view:currentGameView(),teams,queue,idx,currentBid,leadingTeamIndex,bidStep,history,
-      shopCoinsByTeam,shopSquadByTeam,redeemedByTeam,buildSquadsByTeam,spinUsedByTeam,spinResultByTeam,spinPlayerByTeam,
+      shopCoinsByTeam,shopSquadByTeam,redeemedByTeam,buildSquadsByTeam,spinUsedByTeam,spinNextAtByTeam,spinResultByTeam,spinPlayerByTeam,
       shopActiveTeam,lineupTeam,spinActiveTeam,buildActiveTeam,
       numTeams:document.getElementById('numTeams').value,budget:document.getElementById('budget').value,
       battleResult:document.getElementById('battleResult')?.innerHTML||''};
@@ -1271,6 +1287,7 @@ function resumeGameProgress(){
       if(state.redeemedByTeam?.[key]!==undefined) redeemedByTeam[key]=state.redeemedByTeam[key];
       if(state.buildSquadsByTeam?.[key]) buildSquadsByTeam[key]=state.buildSquadsByTeam[key];
       if(state.spinUsedByTeam?.[key]!==undefined) spinUsedByTeam[key]=state.spinUsedByTeam[key];
+      if(state.spinNextAtByTeam?.[key]!==undefined) spinNextAtByTeam[key]=Number(state.spinNextAtByTeam[key])||0;
       if(state.spinResultByTeam?.[key]) spinResultByTeam[key]=state.spinResultByTeam[key];
       if(state.spinPlayerByTeam?.[key]) spinPlayerByTeam[key]=state.spinPlayerByTeam[key];
     }
@@ -1296,6 +1313,7 @@ function resumeGameProgress(){
     }else if(state.view==='spin'){
       document.getElementById('spinOverlay').classList.remove('hidden');
       renderSpin();
+      startSpinCountdown();
     }else{
       document.getElementById('setup').classList.remove('hidden');
     }
