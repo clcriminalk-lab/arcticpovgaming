@@ -196,6 +196,15 @@
   .battle-score{font-size:clamp(2rem,8vw,3.2rem);font-weight:900;color:#ffda7b;letter-spacing:.04em;margin:4px 0;}
   .battle-result-title{font-weight:800;font-size:1.15rem;}
   .battle-result-meta{font-size:.85rem;color:#b8cbd3;margin-top:6px;}
+  .spin-wheel-wrap{position:relative;width:min(72vw,300px);aspect-ratio:1;margin:12px auto 18px;}
+  .spin-wheel{position:absolute;inset:0;border:8px solid #f4bd50;border-radius:50%;background:conic-gradient(from -30deg,#f4bd50 0deg 60deg,#17394a 60deg 120deg,#54b88a 120deg 180deg,#a94145 180deg 240deg,#4b6fbe 240deg 300deg,#a36ec2 300deg 360deg);box-shadow:0 12px 32px #0008,inset 0 0 0 4px rgba(255,255,255,.2);transition:transform 4.2s cubic-bezier(.12,.75,.16,1);}
+  .spin-wheel:after{content:"⚽";position:absolute;left:50%;top:50%;width:54px;height:54px;display:grid;place-items:center;border-radius:50%;background:#07131d;border:3px solid #ffda7b;transform:translate(-50%,-50%);font-size:1.5rem;}
+  .spin-wheel-label{position:absolute;left:50%;top:50%;z-index:1;color:#fff;font-weight:900;font-size:.92rem;text-shadow:0 2px 5px #000;transform:translate(-50%,-50%) rotate(var(--angle)) translateY(-102px) rotate(var(--counter-angle));}
+  .spin-pointer{position:absolute;z-index:2;top:-7px;left:50%;transform:translateX(-50%);color:#fff;font-size:2rem;line-height:1;text-shadow:0 2px 6px #000;}
+  .spin-result{text-align:center;min-height:1.5em;color:#ffda7b;font-weight:800;margin:12px 0;}
+  .spin-team-toggle{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;}
+  .spin-team-toggle button{padding:9px 6px;}
+  @media(max-width:420px){.spin-wheel-label{transform:translate(-50%,-50%) rotate(var(--angle)) translateY(-34vw) rotate(var(--counter-angle));}}
   .goal-animation{position:relative;overflow:hidden;min-height:86px;margin:0 0 12px;border:1px solid rgba(255,218,123,.3);border-radius:12px;background:radial-gradient(ellipse at 50% 100%,rgba(31,145,91,.52),rgba(4,18,25,.78) 72%);}
   .goal-net{position:absolute;right:10%;top:18px;width:64px;height:54px;border:2px solid rgba(255,255,255,.78);border-left:0;background:repeating-linear-gradient(0deg,transparent 0 9px,rgba(255,255,255,.22) 9px 10px),repeating-linear-gradient(90deg,transparent 0 12px,rgba(255,255,255,.2) 12px 13px);transform:perspective(70px) rotateY(-16deg);}
   .goal-label{position:absolute;left:50%;top:9px;transform:translateX(-50%);color:#ffda7b;font-size:1.3rem;font-weight:1000;letter-spacing:.16em;text-shadow:0 0 18px rgba(255,218,123,.65);animation:goalPop .55s cubic-bezier(.2,1.6,.4,1) both;}
@@ -246,6 +255,7 @@
     <button class="btn-gold" onclick="startAuction()">Start auction</button>
     <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openBuild()">🛠️ Build</button>
     <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openShop()">🛒 Player shop</button>
+    <button class="btn-outline" style="width:100%; margin-top:10px;" onclick="openSpin()">🎡 Spin</button>
     <button class="btn-gold" style="width:100%; margin-top:10px;" onclick="openLineup()">▶ Play</button>
   </div>
 
@@ -318,6 +328,30 @@
           <thead><tr><th>Player</th><th>Position</th><th>OVR</th><th>Base</th><th>Tags</th><th></th></tr></thead>
           <tbody id="shopBody"></tbody>
         </table>
+      </div>
+    </div>
+  </div>
+
+    <div id="spinOverlay" class="hidden shop-overlay">
+    <div class="shop-panel">
+      <div class="shop-header">
+        <div><h1 style="margin-bottom:2px;">Prize Spin</h1><p class="sub" style="margin-bottom:0;">One free spin per team</p></div>
+        <button class="btn-outline" onclick="closeSpin()">✕ Close</button>
+      </div>
+      <div class="card">
+        <div id="spinTeamToggle" class="spin-team-toggle" role="group" aria-label="Choose a team for the prize spin"></div>
+        <div class="spin-wheel-wrap" aria-label="Prize wheel">
+          <div class="spin-pointer">▼</div>
+          <div id="spinWheel" class="spin-wheel"></div>
+          <span class="spin-wheel-label" style="--angle:0deg;--counter-angle:0deg">50</span>
+          <span class="spin-wheel-label" style="--angle:60deg;--counter-angle:-60deg">100</span>
+          <span class="spin-wheel-label" style="--angle:120deg;--counter-angle:-120deg">250</span>
+          <span class="spin-wheel-label" style="--angle:180deg;--counter-angle:-180deg">500</span>
+          <span class="spin-wheel-label" style="--angle:240deg;--counter-angle:-240deg">1K</span>
+          <span class="spin-wheel-label" style="--angle:300deg;--counter-angle:-300deg">0</span>
+        </div>
+        <p id="spinResult" class="spin-result" aria-live="polite">Pick a team and spin to win coins.</p>
+        <button id="spinButton" class="btn-gold" style="width:100%;" onclick="spinPrize()">🎡 Spin for coins</button>
       </div>
     </div>
   </div>
@@ -700,6 +734,53 @@ const shopCoinsByTeam = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0};
 const shopSquadByTeam = {1:[], 2:[], 3:[], 4:[], 5:[], 6:[]};
 const redeemedByTeam = {1:false,2:false,3:false,4:false,5:false,6:false};
 let shopActiveTeam = 1;
+
+const spinUsedByTeam = {1:false, 2:false, 3:false, 4:false};
+const spinResultByTeam = {1:'', 2:'', 3:'', 4:''};
+let spinActiveTeam = 1;
+let spinInProgress = false;
+let spinRotation = 0;
+
+function openSpin(){
+  spinActiveTeam=shopActiveTeam;
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('spinOverlay').classList.remove('hidden');
+  renderSpin();
+}
+function closeSpin(){
+  document.getElementById('spinOverlay').classList.add('hidden');
+  document.getElementById('setup').classList.remove('hidden');
+}
+function selectSpinTeam(team){
+  if(spinInProgress||team<1||team>4) return;
+  spinActiveTeam=team;
+  renderSpin();
+}
+function renderSpin(){
+  document.getElementById('spinTeamToggle').innerHTML=[1,2,3,4].map(n=>{
+    const label=teams[n-1]?.name||`Team ${n}`;
+    return `<button class="${n===spinActiveTeam?'btn-gold':'btn-outline'}" aria-pressed="${n===spinActiveTeam}" onclick="selectSpinTeam(${n})">${label}</button>`;
+  }).join('');
+  const used=spinUsedByTeam[spinActiveTeam];
+  document.getElementById('spinButton').disabled=used||spinInProgress;
+  document.getElementById('spinButton').textContent=used?'Spin used':'🎡 Spin for coins';
+  document.getElementById('spinResult').textContent=spinInProgress?'The wheel is spinning…':(spinResultByTeam[spinActiveTeam]|| (used?'This team has already used its spin.':'Pick a team and spin to win coins.'));
+}
+function spinPrize(){
+  if(spinUsedByTeam[spinActiveTeam]||spinInProgress) return;
+  const prizes=[50,100,250,500,1000,0];
+  const prizeIndex=Math.floor(Math.random()*prizes.length);
+  const prize=prizes[prizeIndex];
+  spinUsedByTeam[spinActiveTeam]=true;
+  spinResultByTeam[spinActiveTeam]=prize?`Team ${spinActiveTeam} won ${prize.toLocaleString()} coins!`:`Team ${spinActiveTeam} landed on 0 coins. Better luck next time!`;
+  shopCoinsByTeam[spinActiveTeam]+=prize;
+  spinInProgress=true;
+  spinRotation+=360*6+((360-prizeIndex*60)%360);
+  document.getElementById('spinWheel').style.transform=`rotate(${spinRotation}deg)`;
+  renderSpin();
+  saveGameProgress(false);
+  window.setTimeout(()=>{spinInProgress=false;renderSpin();saveGameProgress(false);},4300);
+}
 
 function redeemShopCode(){
   const input=document.getElementById('redeemCode');
@@ -1106,13 +1187,14 @@ function currentGameView(){
   if(!document.getElementById('auction').classList.contains('hidden')) return 'auction';
   if(!document.getElementById('results').classList.contains('hidden')) return 'results';
   if(!document.getElementById('lineup').classList.contains('hidden')) return 'lineup';
+  if(!document.getElementById('spinOverlay').classList.contains('hidden')) return 'spin';
   return 'menu';
 }
 function saveGameProgress(manual=false){
   try{
     const state={version:1,view:currentGameView(),teams,queue,idx,currentBid,leadingTeamIndex,bidStep,history,
-      shopCoinsByTeam,shopSquadByTeam,redeemedByTeam,buildSquadsByTeam,
-      shopActiveTeam,lineupTeam,buildActiveTeam,
+      shopCoinsByTeam,shopSquadByTeam,redeemedByTeam,buildSquadsByTeam,spinUsedByTeam,spinResultByTeam,
+      shopActiveTeam,lineupTeam,spinActiveTeam,buildActiveTeam,
       numTeams:document.getElementById('numTeams').value,budget:document.getElementById('budget').value,
       battleResult:document.getElementById('battleResult')?.innerHTML||''};
     localStorage.setItem(GAME_SAVE_KEY,JSON.stringify(state));
@@ -1150,13 +1232,16 @@ function resumeGameProgress(){
       if(state.shopSquadByTeam?.[key]) shopSquadByTeam[key]=state.shopSquadByTeam[key];
       if(state.redeemedByTeam?.[key]!==undefined) redeemedByTeam[key]=state.redeemedByTeam[key];
       if(state.buildSquadsByTeam?.[key]) buildSquadsByTeam[key]=state.buildSquadsByTeam[key];
+      if(state.spinUsedByTeam?.[key]!==undefined) spinUsedByTeam[key]=state.spinUsedByTeam[key];
+      if(state.spinResultByTeam?.[key]) spinResultByTeam[key]=state.spinResultByTeam[key];
     }
     shopActiveTeam=state.shopActiveTeam||1; lineupTeam=state.lineupTeam||1;
+    spinActiveTeam=state.spinActiveTeam||shopActiveTeam;
     buildActiveTeam=state.buildActiveTeam||1;
     buildSquad=buildSquadsByTeam[buildActiveTeam]||[];
     document.getElementById('numTeams').value=state.numTeams||teams.length||4;
     document.getElementById('budget').value=state.budget||100;
-    ['auction','results','lineup','build','shop'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+    ['auction','results','lineup','build','shop','spinOverlay'].forEach(id=>document.getElementById(id).classList.add('hidden'));
     document.getElementById('setup').classList.add('hidden');
     if(state.view==='auction'&&queue.length&&idx<queue.length){
       document.getElementById('auction').classList.remove('hidden');
@@ -1169,6 +1254,9 @@ function resumeGameProgress(){
       renderBattleTeams(); renderLineup();
       const result=document.getElementById('battleResult');
       if(result&&state.battleResult) result.innerHTML=state.battleResult;
+    }else if(state.view==='spin'){
+      document.getElementById('spinOverlay').classList.remove('hidden');
+      renderSpin();
     }else{
       document.getElementById('setup').classList.remove('hidden');
     }
@@ -1179,7 +1267,7 @@ function resumeGameProgress(){
 }
 function installAutoSave(){
   ['startAuction','placeBid','sellPlayer','skipPlayer','goBack','finish','openLineup','selectLineupTeam','closeLineup',
-   'openBuild','selectBuildTeam','closeBuild','addToBuild','removeFromBuild','selectShopTeam','buyPlayer','redeemShopCode','openShop','closeShop','startBattle']
+   'openBuild','selectBuildTeam','closeBuild','addToBuild','removeFromBuild','selectShopTeam','buyPlayer','redeemShopCode','openShop','closeShop','startBattle','openSpin','closeSpin','selectSpinTeam','spinPrize']
     .forEach(name=>{
       const original=window[name];
       if(typeof original!=='function') return;
