@@ -196,18 +196,30 @@
   .battle-score{font-size:clamp(2rem,8vw,3.2rem);font-weight:900;color:#ffda7b;letter-spacing:.04em;margin:4px 0;}
   .battle-result-title{font-weight:800;font-size:1.15rem;}
   .battle-result-meta{font-size:.85rem;color:#b8cbd3;margin-top:6px;}
-  .spin-wheel-wrap{position:relative;width:min(72vw,300px);aspect-ratio:1;margin:12px auto 18px;}
-    .spin-wheel{position:absolute;inset:0;border:8px solid #f4bd50;border-radius:50%;background:conic-gradient(from -90deg,#54b88a 0deg 180deg,#4b6fbe 180deg 270deg,#a36ec2 270deg 324deg,#f4bd50 324deg 352.8deg,#e55e55 352.8deg 360deg);box-shadow:0 12px 32px #0008,inset 0 0 0 4px rgba(255,255,255,.2);transition:transform 4.2s cubic-bezier(.12,.75,.16,1);}
-  .spin-wheel:after{content:"⚽";position:absolute;left:50%;top:50%;width:54px;height:54px;display:grid;place-items:center;border-radius:50%;background:#07131d;border:3px solid #ffda7b;transform:translate(-50%,-50%);font-size:1.5rem;}
-    .spin-wheel-label{position:absolute;left:50%;top:50%;z-index:1;color:#fff;font-weight:900;font-size:.85rem;text-shadow:0 2px 5px #000;transform:translate(-50%,-50%) rotate(var(--angle)) translateY(-102px) rotate(var(--counter-angle));}
-  .spin-pointer{position:absolute;z-index:2;top:-7px;left:50%;transform:translateX(-50%);color:#fff;font-size:2rem;line-height:1;text-shadow:0 2px 6px #000;}
+  .spin-walk-scene{position:relative;overflow:hidden;height:190px;margin:12px 0 16px;border:1px solid rgba(198,220,230,.22);border-radius:16px;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 38px,transparent 38px 76px),linear-gradient(145deg,#176b45,#0b462f);box-shadow:inset 0 0 50px rgba(0,0,0,.28);}
+  .spin-walk-scene:before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px solid rgba(255,255,255,.28);}
+  .spin-walk-scene:after{content:"";position:absolute;left:50%;top:50%;width:56px;height:56px;border:1px solid rgba(255,255,255,.28);border-radius:50%;transform:translate(-50%,-50%);}
+  .spin-player{position:absolute;z-index:1;left:7%;bottom:18px;width:78px;height:142px;filter:drop-shadow(0 5px 4px #0018);}
+  .spin-player svg{width:100%;height:100%;overflow:visible;}
+  .walk-body{transform-origin:60px 80px;}
+  .walk-leg{transform-box:view-box;transform-origin:60px 80px;}
+  .spin-ball{position:absolute;z-index:1;left:18%;bottom:16px;font-size:1.7rem;filter:drop-shadow(0 3px 4px #0008);}
+  .spin-walk-scene.walking .spin-player{animation:walkAcross 4.2s cubic-bezier(.18,.72,.2,1) both;}
+  .spin-walk-scene.walking .walk-body{animation:bodyStep .5s ease-in-out 0s 7;}
+  .spin-walk-scene.walking .walk-leg.left{animation:legStep .5s ease-in-out 0s 7 alternate;}
+  .spin-walk-scene.walking .walk-leg.right{animation:legStep .5s ease-in-out .25s 7 alternate-reverse;}
+  .spin-walk-scene.walking .spin-ball{animation:ballRoll 4.2s ease-in-out both;}
+  @keyframes walkAcross{0%{left:-8%}52%{left:43%}100%{left:43%}}
+  @keyframes bodyStep{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes legStep{0%{transform:rotate(-22deg)}100%{transform:rotate(22deg)}}
+  @keyframes ballRoll{0%{left:10%;transform:rotate(0)}55%,100%{left:58%;transform:rotate(720deg)}}
+  @media(prefers-reduced-motion:reduce){.spin-walk-scene.walking .spin-player,.spin-walk-scene.walking .walk-body,.spin-walk-scene.walking .walk-leg,.spin-walk-scene.walking .spin-ball{animation:none}}
   .spin-result{text-align:center;min-height:1.5em;color:#ffda7b;font-weight:800;margin:12px 0;}
   .spin-team-toggle{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;}
   .spin-odds{text-align:center;color:#b8cbd3;font-size:.78rem;line-height:1.6;margin:6px 0 14px;}
   .spin-player-reward{text-align:center;padding:14px;margin:12px 0;border:1px solid var(--line);border-radius:14px;background:linear-gradient(135deg,rgba(244,189,80,.12),rgba(4,17,25,.5));font-weight:800;}
   .spin-player-reward strong{display:block;color:#ffda7b;letter-spacing:.12em;font-size:.8rem;margin-bottom:4px;}
   .spin-team-toggle button{padding:9px 6px;}
-  @media(max-width:420px){.spin-wheel-label{transform:translate(-50%,-50%) rotate(var(--angle)) translateY(-34vw) rotate(var(--counter-angle));}}
   .goal-animation{position:relative;overflow:hidden;min-height:86px;margin:0 0 12px;border:1px solid rgba(255,218,123,.3);border-radius:12px;background:radial-gradient(ellipse at 50% 100%,rgba(31,145,91,.52),rgba(4,18,25,.78) 72%);}
   .goal-net{position:absolute;right:10%;top:18px;width:64px;height:54px;border:2px solid rgba(255,255,255,.78);border-left:0;background:repeating-linear-gradient(0deg,transparent 0 9px,rgba(255,255,255,.22) 9px 10px),repeating-linear-gradient(90deg,transparent 0 12px,rgba(255,255,255,.2) 12px 13px);transform:perspective(70px) rotateY(-16deg);}
   .goal-label{position:absolute;left:50%;top:9px;transform:translateX(-50%);color:#ffda7b;font-size:1.3rem;font-weight:1000;letter-spacing:.16em;text-shadow:0 0 18px rgba(255,218,123,.65);animation:goalPop .55s cubic-bezier(.2,1.6,.4,1) both;}
@@ -343,14 +355,20 @@
       </div>
       <div class="card">
         <div id="spinTeamToggle" class="spin-team-toggle" role="group" aria-label="Choose a team for the prize spin"></div>
-        <div class="spin-wheel-wrap" aria-label="Prize wheel">
-          <div class="spin-pointer">▼</div>
-          <div id="spinWheel" class="spin-wheel"></div>
-          <span class="spin-wheel-label" style="--angle:0deg;--counter-angle:0deg">C</span>
-          <span class="spin-wheel-label" style="--angle:135deg;--counter-angle:-135deg">R</span>
-          <span class="spin-wheel-label" style="--angle:207deg;--counter-angle:-207deg">E</span>
-          <span class="spin-wheel-label" style="--angle:248.4deg;--counter-angle:-248.4deg">L</span>
-          <span class="spin-wheel-label" style="--angle:266.4deg;--counter-angle:-266.4deg">M</span>
+        <div id="spinWalkScene" class="spin-walk-scene" aria-label="A football player walking onto the pitch">
+          <div class="spin-player" aria-hidden="true">
+            <svg viewBox="0 0 120 160">
+              <g class="walk-body">
+                <circle cx="60" cy="22" r="14" fill="#d8a982" stroke="#542f25" stroke-width="3"/>
+                <path d="M47 40 Q60 34 73 40 L82 83 L38 83 Z" fill="#f4bd50" stroke="#183344" stroke-width="4"/>
+                <path d="M47 47 L30 76 M73 47 L90 76" fill="none" stroke="#d8a982" stroke-width="9" stroke-linecap="round"/>
+                <path d="M47 78 L73 78" fill="none" stroke="#173447" stroke-width="7"/>
+                <g class="walk-leg left"><path d="M50 80 L48 112 L38 140" fill="none" stroke="#f3f7fa" stroke-width="12" stroke-linecap="round"/><path d="M38 140 L27 145" fill="none" stroke="#f4bd50" stroke-width="9" stroke-linecap="round"/></g>
+                <g class="walk-leg right"><path d="M70 80 L72 112 L82 140" fill="none" stroke="#f3f7fa" stroke-width="12" stroke-linecap="round"/><path d="M82 140 L94 145" fill="none" stroke="#f4bd50" stroke-width="9" stroke-linecap="round"/></g>
+              </g>
+            </svg>
+          </div>
+          <div class="spin-ball" aria-hidden="true">⚽</div>
         </div>
         <p id="spinOdds" class="spin-odds">Common 50% · Rare 25% · Epic 15% · Legendary 8% · Mythic 2%</p>
         <p id="spinResult" class="spin-result" aria-live="polite">Pick a team and spin for a player.</p>
@@ -745,7 +763,6 @@ const spinPlayerByTeam = {1:null, 2:null, 3:null, 4:null};
 const SPIN_RARITY_ODDS=[['Common',50],['Rare',25],['Epic',15],['Legendary',8],['Mythic',2]];
 let spinActiveTeam = 1;
 let spinInProgress = false;
-let spinRotation = 0;
 
 function openSpin(){
   spinActiveTeam=shopActiveTeam;
@@ -779,7 +796,7 @@ function renderSpin(){
   document.getElementById('spinOdds').textContent=hasAvailable?'Drop rates · '+available.map(([rarity,odds])=>`${rarity} ${Math.round(odds/totalOdds*100)}%`).join(' · '):'No player contracts remain';
   document.getElementById('spinButton').disabled=used||spinInProgress||!hasAvailable;
   document.getElementById('spinButton').textContent=used?'Spin used':(hasAvailable?'🎡 Spin contract':'No players left');
-  document.getElementById('spinResult').textContent=spinInProgress?'Opening your player contract…':(spinResultByTeam[spinActiveTeam]|| (used?'This team has already used its spin.':(hasAvailable?'Pick a team and spin for a player.':'All eligible players are already owned.')));
+  document.getElementById('spinResult').textContent=spinInProgress?'A player is walking out…':(spinResultByTeam[spinActiveTeam]|| (used?'This team has already used its spin.':(hasAvailable?'Pick a team and spin for a player.':'All eligible players are already owned.')));
   const reward=spinPlayerByTeam[spinActiveTeam], rewardBox=document.getElementById('spinPlayerReward');
   if(reward&&!spinInProgress){
     rewardBox.classList.remove('hidden');
@@ -806,17 +823,17 @@ function spinPrize(){
   spinUsedByTeam[spinActiveTeam]=true;
   spinResultByTeam[spinActiveTeam]=`Team ${spinActiveTeam} signed ${rarity} player ${name}!`;
   spinInProgress=true;
-  const rarityAngles={Common:0,Rare:135,Epic:207,Legendary:248.4,Mythic:266.4};
-  const targetRotation=(360-rarityAngles[rarity])%360;
-  const currentRotation=((spinRotation%360)+360)%360;
-  spinRotation+=360*6+((targetRotation-currentRotation+360)%360);
-  document.getElementById('spinWheel').style.transform=`rotate(${spinRotation}deg)`;
+  const walkScene=document.getElementById('spinWalkScene');
+  walkScene.classList.remove('walking');
+  void walkScene.offsetWidth;
+  walkScene.classList.add('walking');
   renderSpin();
   renderShopToggle();
   renderShopList();
   renderShopSquad();
   saveGameProgress(false);
-  window.setTimeout(()=>{spinInProgress=false;renderSpin();saveGameProgress(false);},4300);
+  const revealDelay=window.matchMedia('(prefers-reduced-motion: reduce)').matches?150:4300;
+  window.setTimeout(()=>{spinInProgress=false;walkScene.classList.remove('walking');renderSpin();saveGameProgress(false);},revealDelay);
 }
 function playerRarityFor(name,base){
   const rating=PRIME_RATINGS[name]??Math.round(63+base*1.45);
