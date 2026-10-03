@@ -807,7 +807,9 @@ function spinPrize(){
   spinResultByTeam[spinActiveTeam]=`Team ${spinActiveTeam} signed ${rarity} player ${name}!`;
   spinInProgress=true;
   const rarityAngles={Common:0,Rare:135,Epic:207,Legendary:248.4,Mythic:266.4};
-  spinRotation+=360*6+((360-rarityAngles[rarity])%360);
+  const targetRotation=(360-rarityAngles[rarity])%360;
+  const currentRotation=((spinRotation%360)+360)%360;
+  spinRotation+=360*6+((targetRotation-currentRotation+360)%360);
   document.getElementById('spinWheel').style.transform=`rotate(${spinRotation}deg)`;
   renderSpin();
   renderShopToggle();
