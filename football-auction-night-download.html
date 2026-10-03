@@ -1036,8 +1036,8 @@ const PRIME_RATINGS = {
 };
 
 function ratingFor(name, basePrice){
-  if(PRIME_RATINGS[name] !== undefined) return Math.min(99, PRIME_RATINGS[name] + 8);
-  return Math.min(99, Math.round(63 + basePrice * 1.45) + 8);
+  if(PRIME_RATINGS[name] !== undefined) return PRIME_RATINGS[name] + 8;
+  return Math.min(99, Math.round(63 + basePrice * 1.45)) + 8;
 }
 
 const ELIGIBLE_PLAYERS = PLAYERS.filter(([name,pos,base]) => ratingFor(name, base) >= 85);
@@ -1272,6 +1272,12 @@ function resetGameProgress(){
   try{localStorage.removeItem(GAME_SAVE_KEY);location.reload();}
   catch(error){document.getElementById('saveStatus').textContent='Could not reset saved progress';}
 }
+function restoreSavedPlayerRatings(players){
+  return (players||[]).map(player=>{
+    const source=PLAYERS.find(([name])=>name===player.name);
+    return source?{...player,rating:ratingFor(source[0],source[2])}:player;
+  });
+}
 function resumeGameProgress(){
   let state;
   try{state=JSON.parse(localStorage.getItem(GAME_SAVE_KEY)||'null');}catch(error){state=null;}
@@ -1290,6 +1296,12 @@ function resumeGameProgress(){
       if(state.spinNextAtByTeam?.[key]!==undefined) spinNextAtByTeam[key]=Number(state.spinNextAtByTeam[key])||0;
       if(state.spinResultByTeam?.[key]) spinResultByTeam[key]=state.spinResultByTeam[key];
       if(state.spinPlayerByTeam?.[key]) spinPlayerByTeam[key]=state.spinPlayerByTeam[key];
+    }
+    teams=teams.map(team=>({...team,squad:restoreSavedPlayerRatings(team.squad)}));
+    for(const key of Object.keys(shopSquadByTeam)){
+      shopSquadByTeam[key]=restoreSavedPlayerRatings(shopSquadByTeam[key]);
+      buildSquadsByTeam[key]=restoreSavedPlayerRatings(buildSquadsByTeam[key]);
+      if(spinPlayerByTeam[key]) spinPlayerByTeam[key]=restoreSavedPlayerRatings([spinPlayerByTeam[key]])[0];
     }
     shopActiveTeam=state.shopActiveTeam||1; lineupTeam=state.lineupTeam||1;
     spinActiveTeam=state.spinActiveTeam||shopActiveTeam;
